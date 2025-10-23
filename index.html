@@ -76,63 +76,121 @@
   <h2>I. Fundamentos, Configuración y Manipulación Numérica</h2>
 
   <p>
-    Esta sección establece la base para el <strong>Procesamiento Digital de Imágenes (PDI)</strong>,
-    cubriendo la configuración del entorno, la carga de datos y las operaciones matemáticas preliminares necesarias.
-  </p>
-
-  <hr>
-
-
-</section>
-
-<section id="manipulacion">
-  <h3>2. Manipulación Numérica </h3>
+    <!-- TEMA 3 -->
+<section id="tema3">
+  <h2>3. Filtrado y Detección de Bordes en PDI</h2>
   <p>
-    Estas funciones de <strong>NumPy</strong> son fundamentales en PDI para el manejo de coordenadas y valores de píxeles,
-    especialmente para filtros y operaciones geométricas.
+    Esta sección cubre las técnicas esenciales de manipulación de vecindades (filtrado)
+    utilizadas para suavizar imágenes, eliminar ruido y resaltar contornos.
   </p>
 
-  <h4>A. Función Piso (⌊x⌋)</h4>
-  <p>Devuelve el entero más grande que es menor o igual al número (trunca hacia abajo).</p>
-
+  <h3>3.1. Máscaras (Kernels o Elementos Estructurantes)</h3>
+  <p>
+    Una <strong>máscara (kernel)</strong> es una matriz pequeña que define la vecindad de píxeles
+    que influirá en el valor del píxel central. La disposición y los valores de sus elementos
+    determinan la operación de filtrado (suavizado, detección de bordes, etc.).
+  </p>
+  <p>
+    <strong>Funcionamiento:</strong> Se definen como arrays de NumPy con el tipo de dato adecuado
+    (típicamente <code>np.float32</code>) para convolución. Los valores internos representan
+    los pesos aplicados a los píxeles vecinos.
+  </p>
   <pre><code class="language-python">
-x = np.float32(3.14151926)
+# Kernel para Filtro Promedio (caja 3x3 sin normalizar)
+kernel_caja = np.ones((3, 3), np.float32)
 
-# Devuelve 3.0
-resultado_piso = np.floor(x)
-print(f"Piso de {x} es {resultado_piso}")
-
-# Uso en PDI (ejemplo teórico):
-# Usado a menudo para obtener el índice de píxel más cercano al origen.
+# Kernel para Filtro Laplaciano (ejemplo de 4-vecinos)
+kernel_laplaciano = np.array([[ 0,  1,  0],
+                              [ 1, -4,  1],
+                              [ 0,  1,  0]], dtype=np.float32)
   </code></pre>
 
-  <h4>B. Función Techo (⌈x⌉)</h4>
-  <p>Devuelve el entero más pequeño que es mayor o igual al número (trunca hacia arriba).</p>
-
+  <h3>3.2. Convolución y Correlación</h3>
+  <p>
+    La <strong>convolución</strong> es la operación fundamental del filtrado lineal.
+    Implica voltear la máscara 180° y calcular la suma ponderada del producto del kernel
+    con los píxeles de la vecindad. En la práctica, OpenCV utiliza la correlación (equivalente
+    si el kernel es simétrico) mediante la función <code>cv.filter2D()</code>.
+  </p>
   <pre><code class="language-python">
-x = np.float32(3.14151926)
-
-# Devuelve 4.0
-resultado_techo = np.ceil(x)
-print(f"Techo de {x} es {resultado_techo}")
-
-# Uso en PDI (ejemplo teórico):
-# Usado para asegurar que un índice no exceda los límites al redondear hacia arriba.
+# Se asume que 'kernel_normalizado' ya está definido (ej. kernel_caja / 9)
+apple_filtrada = cv.filter2D(apple, -1, kernel_normalizado)
   </code></pre>
 
-  <h4>C. Redondeo Estándar</h4>
-  <p>Utiliza la función estándar para redondear al entero más cercano.</p>
-
+  <h3>3.3. Filtro Promedio (Filtro de Caja)</h3>
+  <p>
+    Es un filtro de paso bajo que realiza la operación de suavizado.
+    Su principal efecto es la atenuación del ruido de alta frecuencia y el detalle fino.
+  </p>
+  <p>
+    <strong>Funcionamiento:</strong> Reemplaza el valor de cada píxel con la media aritmética
+    de los píxeles en su vecindad. El kernel debe estar normalizado (la suma de sus elementos
+    es 1) para preservar el brillo global.
+  </p>
   <pre><code class="language-python">
-x = np.float32(3.14151926)
+# 1. Definición y Normalización del Kernel (3x3)
+kernel_caja = np.ones((3, 3), np.float32)
+kernel_normalizado = kernel_caja / 9
 
-# Devuelve 3
-resultado_redondo = round(x)
-print(f"Redondeo de {x} es {resultado_redondo}")
+# 2. Aplicación del Filtro
+apple_promediada = cv.filter2D(apple, -1, kernel_normalizado)
   </code></pre>
-</section>
 
-      </p>
+  <h3>3.4. Filtro Mediano</h3>
+  <p>
+    Es un filtro <strong>no lineal (estadístico)</strong>, ideal para eliminar el ruido
+    <em>Sal y Pimienta</em> (salt-and-pepper noise).
+  </p>
+  <p>
+    <strong>Funcionamiento:</strong> En lugar de calcular un promedio, el píxel central se
+    reemplaza con la mediana de todos los valores de intensidad dentro de la ventana del kernel.
+    Esto preserva mejor los bordes que el filtro promedio.
+  </p>
+  <pre><code class="language-python">
+# 1. Cargar imagen con ruido S&P (asumimos 'img_noise' está cargada)
+# img_noise = cv.imread("/ruta/a/images/s&p-noise.jpeg", 0)
+
+# Aplicar el Filtro de Mediana (kernel de 3x3)
+img_median = cv.medianBlur(img_noise, 3)
+  </code></pre>
+
+  <h3>3.5. Filtro Laplaciano</h3>
+  <p>
+    Es un filtro de <strong>paso alto</strong> que aproxima la segunda derivada.
+    Se utiliza para la detección y realce de bordes.
+  </p>
+  <p>
+    <strong>Funcionamiento:</strong> El kernel tiene una suma de pesos igual a cero
+    (<code>&sum;K = 0</code>). En regiones uniformes la respuesta es cero; en bordes,
+    donde la intensidad cambia rápidamente, la respuesta es alta o baja, revelando el contorno.
+  </p>
+  <pre><code class="language-python">
+# 1. Definición del Kernel Laplaciano de 4-Vecinos
+kernel_laplaciano = np.array([[ 0,  1,  0],
+                              [ 1, -4,  1],
+                              [ 0,  1,  0]], dtype=np.float32)
+
+# 2. Detección de Bordes
+lena_laplaciana = cv.filter2D(lena_gray, -1, kernel_laplaciano)
+
+# 3. Realce de la Imagen
+lena_realzada = lena_gray + lena_laplaciana
+  </code></pre>
+
+  <h3>3.6. Gradiente</h3>
+  <p>
+    El término <strong>Gradiente</strong> puede referirse a la primera derivada (como en Sobel o Prewitt),
+    pero en este contexto hace referencia al <strong>Gradiente Morfológico</strong>, un potente detector de contornos.
+  </p>
+  <p>
+    <strong>Funcionamiento (Gradiente Morfológico):</strong> Se calcula mediante la diferencia entre la
+    <em>Dilatación</em> y la <em>Erosión</em> de la imagen:
+  </p>
+  <p style="text-align:center;">
+    <code
+
+ 
+  </p>
     </section>
 
     <section id="abstract">
