@@ -26,7 +26,7 @@
     <ul>
       <li><a href="#tema1">1. [Tema 1]</a></li>
       <li><a href="#tema2">2. Procesamiento Digital de Imágenes</a></li>
-      <li><a href="#tema3">3. [Tema 3]</a></li>
+      <li><a href="#tema3">3. [Fundamentos, Filtrado y Morfología Matemática]</a></li>
       <li><a href="#abstract">4. Abstract (English)</a></li>
       <li><a href="#conclusiones">5. Conclusiones</a></li>
     </ul>
@@ -69,9 +69,69 @@
 
     <!-- TEMA 3 -->
     <section id="tema3">
-      <h2>3. [Tema 3 (Carol)]</h2>
+      <h2>3. [Fundamentos, Filtrado y Morfología Matemática (Carol)]</h2>
       <p>
-        [Contenido del tema 3]
+
+<section id="fundamentos">
+  <h2>I. Fundamentos, Configuración y Manipulación Numérica</h2>
+
+  <p>
+    Esta sección establece la base para el <strong>Procesamiento Digital de Imágenes (PDI)</strong>,
+    cubriendo la configuración del entorno, la carga de datos y las operaciones matemáticas preliminares necesarias.
+  </p>
+
+  <hr>
+
+
+</section>
+
+<section id="manipulacion">
+  <h3>2. Manipulación Numérica </h3>
+  <p>
+    Estas funciones de <strong>NumPy</strong> son fundamentales en PDI para el manejo de coordenadas y valores de píxeles,
+    especialmente para filtros y operaciones geométricas.
+  </p>
+
+  <h4>A. Función Piso (⌊x⌋)</h4>
+  <p>Devuelve el entero más grande que es menor o igual al número (trunca hacia abajo).</p>
+
+  <pre><code class="language-python">
+x = np.float32(3.14151926)
+
+# Devuelve 3.0
+resultado_piso = np.floor(x)
+print(f"Piso de {x} es {resultado_piso}")
+
+# Uso en PDI (ejemplo teórico):
+# Usado a menudo para obtener el índice de píxel más cercano al origen.
+  </code></pre>
+
+  <h4>B. Función Techo (⌈x⌉)</h4>
+  <p>Devuelve el entero más pequeño que es mayor o igual al número (trunca hacia arriba).</p>
+
+  <pre><code class="language-python">
+x = np.float32(3.14151926)
+
+# Devuelve 4.0
+resultado_techo = np.ceil(x)
+print(f"Techo de {x} es {resultado_techo}")
+
+# Uso en PDI (ejemplo teórico):
+# Usado para asegurar que un índice no exceda los límites al redondear hacia arriba.
+  </code></pre>
+
+  <h4>C. Redondeo Estándar</h4>
+  <p>Utiliza la función estándar para redondear al entero más cercano.</p>
+
+  <pre><code class="language-python">
+x = np.float32(3.14151926)
+
+# Devuelve 3
+resultado_redondo = round(x)
+print(f"Redondeo de {x} es {resultado_redondo}")
+  </code></pre>
+</section>
+
       </p>
     </section>
 
