@@ -73,11 +73,11 @@
       <p>
 
 
-  <h2>I. Fundamentos, Configuración y Manipulación Numérica</h2>
+  <h3>I. Fundamentos, Configuración y Manipulación Numérica</h3>
 
   <p>
    
-  <h2>3. Filtrado y Detección de Bordes en PDI</h2>
+  <h3>3. Filtrado y Detección de Bordes en PDI</h3>
   <p>
     Esta sección cubre las técnicas esenciales de manipulación de vecindades (filtrado)
     utilizadas para suavizar imágenes, eliminar ruido y resaltar contornos.
@@ -197,6 +197,111 @@ lena_realzada = lena_gray + lena_laplaciana
 img_gradiente = cv.morphologyEx(linux_bin_inv, cv.MORPH_GRADIENT, kernel)
   </code></pre>
 </section>
+
+
+    <!-- TEMA 4 -->
+<section id="tema4">
+  <h3>4. Transformaciones Morfológicas</h3>
+  <p>
+    Las transformaciones morfológicas son operaciones no lineales que modifican la estructura de una imagen basándose en la forma, utilizando un <strong>Elemento Estructurante (Kernel)</strong>. Se aplican principalmente a imágenes binarias.
+  </p>
+
+  <h3>4.1. Conceptos Básicos y Elemento Estructurante</h3>
+  <p>
+    La Morfología se basa en el <strong>Elemento Estructurante</strong> (kernel), que actúa como una plantilla o sonda para definir la vecindad de la operación.
+  </p>
+  <p>
+    <strong>Funcionamiento:</strong> Se define típicamente como una matriz de unos (<code>np.uint8</code>) y determina la forma y el tamaño de la vecindad para Erosión y Dilatación.
+  </p>
+
+  <pre><code># Definición del Elemento Estructurante (Kernel) de 5x5
+kernel = np.ones((5, 5), np.uint8)
+
+# Binarización de una imagen para las operaciones morfológicas
+# Convierte píxeles >= 150 a blanco (255) y el resto a negro (0).
+linux_binaria = np.where(linux_gray >= 150, 255, 0).astype(np.uint8)
+  </code></pre>
+
+  <h3>4.2. Erosión y Dilatación</h3>
+  <p>
+    Estas son las dos operaciones fundamentales de la Morfología Matemática.
+  </p>
+
+  <h4>4.2.1. Erosión (<em>I ⊖ K</em>)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> La Erosión encoge o "adelgaza" las áreas de primer plano (blancas). Un píxel central se mantiene blanco solo si el kernel completo cae dentro de la región blanca de la imagen; de lo contrario, se vuelve negro. Esto elimina pequeños objetos brillantes y reduce el tamaño de los objetos.
+  </p>
+
+  <pre><code># Aplica Erosión a la imagen en escala de grises o binaria
+img_eroded = cv.erode(linux_gray, kernel, iterations=1)
+  </code></pre>
+
+  <h4>4.2.2. Dilatación (<em>I ⊕ K</em>)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> La Dilatación agranda o "engrosa" las áreas de primer plano (blancas). Un píxel central se vuelve blanco si al menos una parte del kernel coincide con un píxel blanco de la imagen. Esto rellena pequeños agujeros y une objetos cercanos.
+  </p>
+
+  <pre><code># Aplica Dilatación a la imagen
+img_dilated = cv.dilate(linux_gray, kernel, iterations=1)
+  </code></pre>
+
+  <h3>4.3. Apertura y Cierre</h3>
+  <p>
+    Son operaciones compuestas que utilizan <code>cv.morphologyEx</code> para aplicar secuencias de Erosión y Dilatación, con propósitos de limpieza específicos.
+  </p>
+
+  <h4>4.3.1. Apertura (<em>I ∘ K</em>)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> Es la Erosión seguida de la Dilatación. Se usa para eliminar el ruido (pequeños puntos blancos) sin afectar significativamente la forma de los objetos grandes. La erosión inicial elimina el ruido, y la dilatación posterior restaura el tamaño original de los objetos principales.
+  </p>
+
+  <pre><code># Apertura: Elimina el ruido blanco (cv.MORPH_OPEN)
+img_open = cv.morphologyEx(linux_binaria, cv.MORPH_OPEN, kernel)
+  </code></pre>
+
+  <h4>4.3.2. Cierre (<em>I • K</em>)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> Es la Dilatación seguida de la Erosión. Se usa para rellenar pequeños agujeros dentro de los objetos y cerrar brechas o rupturas finas en su contorno.
+  </p>
+
+  <pre><code># Cierre: Rellena agujeros (cv.MORPH_CLOSE)
+img_close = cv.morphologyEx(linux_binaria, cv.MORPH_CLOSE, kernel)
+  </code></pre>
+
+  <h3>4.4. Transformaciones Avanzadas y Extracción de Bordes</h3>
+  <p>
+    Estas son transformaciones que se obtienen restando los resultados de operaciones morfológicas, permitiendo extraer características específicas de la forma.
+  </p>
+
+  <h4>4.4.1. Gradiente Morfológico (Extracción de Bordes)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> Se calcula como la diferencia entre la imagen dilatada y la erosionada (<em>Dilatación - Erosión</em>). Su resultado aísla el anillo de píxeles que constituye el contorno del objeto, siendo un detector de bordes muy robusto.
+  </p>
+
+  <pre><code># Gradiente Morfológico: Dilatación - Erosión
+img_gradiente = cv.morphologyEx(linux_binaria, cv.MORPH_GRADIENT, kernel)
+
+# El notebook morph3.ipynb describe el Borde Externo: Dilatación - Original
+# img_borde_externo = cv.dilate(linux_binaria, kernel) - linux_binaria
+  </code></pre>
+
+  <h4>4.4.2. Top Hat y Black Hat (Transformaciones de Realce)</h4>
+  <p>
+    <strong>Funcionamiento:</strong> Se utilizan para corregir fondos no uniformes o extraer elementos de la imagen que son más pequeños que el kernel.
+  </p>
+  <ul>
+    <li><strong>Top Hat:</strong> Extrae elementos brillantes pequeños (<em>Original - Apertura</em>).</li>
+    <li><strong>Black Hat:</strong> Extrae elementos oscuros pequeños (<em>Cierre - Original</em>).</li>
+  </ul>
+
+  <pre><code># Top Hat: Realce de elementos brillantes
+img_top_hat = cv.morphologyEx(linux_binaria, cv.MORPH_TOPHAT, kernel)
+
+# Black Hat: Realce de elementos oscuros
+img_black_hat = cv.morphologyEx(linux_binaria, cv.MORPH_BLACKHAT, kernel)
+  </code></pre>
+</section>
+
   </p>
   <p style="text-align:center;">
     <code
