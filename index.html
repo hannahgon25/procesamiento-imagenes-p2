@@ -69,15 +69,14 @@
 
     <!-- TEMA 3 -->
     <section id="tema3">
-      <h2>3. [Fundamentos, Filtrado y Morfología Matemática (Carol)]</h2>
+      <h2>3. Fundamentos, Filtrado y Morfología Matemática (Carol)</h2>
       <p>
 
-<section id="fundamentos">
+
   <h2>I. Fundamentos, Configuración y Manipulación Numérica</h2>
 
   <p>
-    <!-- TEMA 3 -->
-<section id="tema3">
+   
   <h2>3. Filtrado y Detección de Bordes en PDI</h2>
   <p>
     Esta sección cubre las técnicas esenciales de manipulación de vecindades (filtrado)
@@ -185,6 +184,19 @@ lena_realzada = lena_gray + lena_laplaciana
   <p>
     <strong>Funcionamiento (Gradiente Morfológico):</strong> Se calcula mediante la diferencia entre la
     <em>Dilatación</em> y la <em>Erosión</em> de la imagen:
+    </p>
+  <p style="text-align:center;">
+    <code>Gradiente = Dilatación(I) - Erosión(I)</code>
+  </p>
+  <p>
+    Esta resta aísla el anillo de píxeles que forman el borde, proporcionando un contorno más robusto.
+  </p>
+  <pre><code class="language-python">
+# Asumimos que 'linux_bin_inv' (imagen binaria) y 'kernel' están definidos.
+# Aplicación del Gradiente Morfológico
+img_gradiente = cv.morphologyEx(linux_bin_inv, cv.MORPH_GRADIENT, kernel)
+  </code></pre>
+</section>
   </p>
   <p style="text-align:center;">
     <code
