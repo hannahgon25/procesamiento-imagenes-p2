@@ -228,7 +228,7 @@ linux_binaria = np.where(linux_gray >= 150, 255, 0).astype(np.uint8)
     Estas son las dos operaciones fundamentales de la Morfología Matemática.
   </p>
 
-  <h4>4.2.1. Erosión (<em>I ⊖ K</em>)</h4>
+  <h4>4.2.1. Erosión</h4>
   <p>
     <strong>Funcionamiento:</strong> La Erosión adelgaza las áreas de primer plano (blancas).
     Un píxel central se mantiene blanco solo si el kernel completo cae dentro de la región blanca de la imagen;
@@ -239,7 +239,7 @@ linux_binaria = np.where(linux_gray >= 150, 255, 0).astype(np.uint8)
 img_eroded = cv.erode(linux_gray, kernel, iterations=1)
   </code></pre>
 
-  <h4>4.2.2. Dilatación (<em>I ⊕ K</em>)</h4>
+  <h4>4.2.2. Dilatación</h4>
   <p>
     <strong>Funcionamiento:</strong> La Dilatación agranda o engrosa las áreas de primer plano (blancas).
     Un píxel central se vuelve blanco si al menos una parte del kernel coincide con un píxel blanco de la imagen. 
@@ -256,7 +256,7 @@ img_dilated = cv.dilate(linux_gray, kernel, iterations=1)
     con propósitos de limpieza en areas específicas.
   </p>
 
-  <h4>4.3.1. Apertura (<em>I ∘ K</em>)</h4>
+  <h4>4.3.1. Apertura</h4>
   <p>
     <strong>Funcionamiento:</strong> Es la Erosión seguida de la Dilatación. Se usa para eliminar el 
     ruido (pequeños puntos blancos) sin afectar significativamente la forma de los objetos grandes. 
@@ -267,7 +267,7 @@ img_dilated = cv.dilate(linux_gray, kernel, iterations=1)
 img_open = cv.morphologyEx(linux_binaria, cv.MORPH_OPEN, kernel)
   </code></pre>
 
-  <h4>4.3.2. Cierre (<em>I • K</em>)</h4>
+  <h4>4.3.2. Cierre</h4>
   <p>
     <strong>Funcionamiento:</strong> Es la Dilatación seguida de la Erosión. Se usa para rellenar pequeños agujeros
     dentro de los objetos y cerrar brechas o rupturas finas en su contorno.
