@@ -26,7 +26,7 @@
     <ul>
       <li><a href="#tema1">1. [Tema 1]</a></li>
       <li><a href="#tema2">2. Procesamiento Digital de Imágenes</a></li>
-      <li><a href="#tema3">3. [Fundamentos, Filtrado y Morfología Matemática]</a></li>
+      <li><a href="#tema3">3. Fundamentos, Filtrado y Morfología Matemática</a></li>
       <li><a href="#abstract">4. Abstract (English)</a></li>
       <li><a href="#conclusiones">5. Conclusiones</a></li>
     </ul>
@@ -67,7 +67,7 @@
       </p>
     </section>
 
-    <!-- TEMA 3 -->
+   
     <section id="tema3">
       <h2>3. Fundamentos, Filtrado y Morfología Matemática (Carol)</h2>
       <p>
@@ -79,20 +79,20 @@
    
   <h3>3. Filtrado y Detección de Bordes en PDI</h3>
   <p>
-    Esta sección cubre las técnicas esenciales de manipulación de vecindades (filtrado)
-    utilizadas para suavizar imágenes, eliminar ruido y resaltar contornos.
+    Esta sección cubre las técnicas mas importantes de manipulación de vecindades (filtrado)
+    utilizadas para suavizar imágenes, eliminar ruido y resaltar bordes.
   </p>
 
-  <h3>3.1. Máscaras (Kernels o Elementos Estructurantes)</h3>
+  <h3>3.1. Kernels / Elementos Estructurantes</h3>
   <p>
-    Una <strong>máscara (kernel)</strong> es una matriz pequeña que define la vecindad de píxeles
+    Un <strong>kernel</strong> es una matriz pequeña que define la vecindad de píxeles
     que influirá en el valor del píxel central. La disposición y los valores de sus elementos
-    determinan la operación de filtrado (suavizado, detección de bordes, etc.).
+    determinan la operación de filtrado las cuales son: suavizado, detección de bordes, entre otros.
   </p>
   <p>
-    <strong>Funcionamiento:</strong> Se definen como arrays de NumPy con el tipo de dato adecuado
-    (típicamente <code>np.float32</code>) para convolución. Los valores internos representan
-    los pesos aplicados a los píxeles vecinos.
+    <strong>Funcionamiento:</strong> Se definen como arrays de NumPy con el tipo de dato necesario
+    (normalmente <code>np.float32</code>) para convolución. Los valores internos representan
+    la cantidad aplicada a los píxeles vecinos.
   </p>
   <pre><code class="language-python">
 # Kernel para Filtro Promedio (caja 3x3 sin normalizar)
@@ -107,24 +107,23 @@ kernel_laplaciano = np.array([[ 0,  1,  0],
   <h3>3.2. Convolución y Correlación</h3>
   <p>
     La <strong>convolución</strong> es la operación fundamental del filtrado lineal.
-    Implica voltear la máscara 180° y calcular la suma ponderada del producto del kernel
-    con los píxeles de la vecindad. En la práctica, OpenCV utiliza la correlación (equivalente
-    si el kernel es simétrico) mediante la función <code>cv.filter2D()</code>.
+    Para esto se tiene que voltear el kernel 180° y calcular la suma del producto del kernel
+    con los píxeles de la vecindad. En codigo se aplica mediante la función <code>cv.filter2D()</code>.
   </p>
   <pre><code class="language-python">
 # Se asume que 'kernel_normalizado' ya está definido (ej. kernel_caja / 9)
 apple_filtrada = cv.filter2D(apple, -1, kernel_normalizado)
   </code></pre>
 
-  <h3>3.3. Filtro Promedio (Filtro de Caja)</h3>
+  <h3>3.3. Filtro de Caja</h3>
   <p>
-    Es un filtro de paso bajo que realiza la operación de suavizado.
-    Su principal efecto es la atenuación del ruido de alta frecuencia y el detalle fino.
+    Es un filtro que realiza la operación de suavizado.
+    Su principal efecto es la atenuación del ruido de alta frecuencia y los detalles finos.
   </p>
   <p>
     <strong>Funcionamiento:</strong> Reemplaza el valor de cada píxel con la media aritmética
     de los píxeles en su vecindad. El kernel debe estar normalizado (la suma de sus elementos
-    es 1) para preservar el brillo global.
+    es 1) para preservar el brillo general.
   </p>
   <pre><code class="language-python">
 # 1. Definición y Normalización del Kernel (3x3)
@@ -137,13 +136,13 @@ apple_promediada = cv.filter2D(apple, -1, kernel_normalizado)
 
   <h3>3.4. Filtro Mediano</h3>
   <p>
-    Es un filtro <strong>no lineal (estadístico)</strong>, ideal para eliminar el ruido
+    Es un filtro <strong>no lineal</strong>, ideal para eliminar el ruido
     <em>Sal y Pimienta</em> (salt-and-pepper noise).
   </p>
   <p>
     <strong>Funcionamiento:</strong> En lugar de calcular un promedio, el píxel central se
     reemplaza con la mediana de todos los valores de intensidad dentro de la ventana del kernel.
-    Esto preserva mejor los bordes que el filtro promedio.
+    Esto preserva mejor los bordes que el filtro de caja.
   </p>
   <pre><code class="language-python">
 # 1. Cargar imagen con ruido S&P (asumimos 'img_noise' está cargada)
@@ -161,7 +160,7 @@ img_median = cv.medianBlur(img_noise, 3)
   <p>
     <strong>Funcionamiento:</strong> El kernel tiene una suma de pesos igual a cero
     (<code>&sum;K = 0</code>). En regiones uniformes la respuesta es cero; en bordes,
-    donde la intensidad cambia rápidamente, la respuesta es alta o baja, revelando el contorno.
+    donde la intensidad cambia rápidamente, la respuesta es alta o baja, de esta manera revelando el contorno.
   </p>
   <pre><code class="language-python">
 # 1. Definición del Kernel Laplaciano de 4-Vecinos
@@ -178,18 +177,18 @@ lena_realzada = lena_gray + lena_laplaciana
 
   <h3>3.6. Gradiente</h3>
   <p>
-    El término <strong>Gradiente</strong> puede referirse a la primera derivada (como en Sobel o Prewitt),
-    pero en este contexto hace referencia al <strong>Gradiente Morfológico</strong>, un potente detector de contornos.
+    El término <strong>Gradiente</strong> hace referencia al <strong>Gradiente Morfológico</strong>,
+    un detector de contornos de gran potencia.
   </p>
   <p>
     <strong>Funcionamiento (Gradiente Morfológico):</strong> Se calcula mediante la diferencia entre la
-    <em>Dilatación</em> y la <em>Erosión</em> de la imagen:
+    <em>Dilatación</em> y la <em>Erosión</em> de una imagen:
     </p>
   <p style="text-align:center;">
     <code>Gradiente = Dilatación(I) - Erosión(I)</code>
   </p>
   <p>
-    Esta resta aísla el anillo de píxeles que forman el borde, proporcionando un contorno más robusto.
+    Esta resta aísla el anillo de píxeles que forman el borde, proporcionando un contorno más fuerte.
   </p>
   <pre><code class="language-python">
 # Asumimos que 'linux_bin_inv' (imagen binaria) y 'kernel' están definidos.
@@ -198,20 +197,22 @@ img_gradiente = cv.morphologyEx(linux_bin_inv, cv.MORPH_GRADIENT, kernel)
   </code></pre>
 </section>
 
-
-    <!-- TEMA 4 -->
 <section id="tema4">
   <h3>4. Transformaciones Morfológicas</h3>
   <p>
-    Las transformaciones morfológicas son operaciones no lineales que modifican la estructura de una imagen basándose en la forma, utilizando un <strong>Elemento Estructurante (Kernel)</strong>. Se aplican principalmente a imágenes binarias.
+    Las transformaciones morfológicas son operaciones no lineales que modifican la estructura de una imagen 
+    basándose en la forma, utilizando un <strong>Elemento Estructurante (Kernel)</strong>. 
+    Se aplican principalmente a imágenes binarias.
   </p>
 
   <h3>4.1. Conceptos Básicos y Elemento Estructurante</h3>
   <p>
-    La Morfología se basa en el <strong>Elemento Estructurante</strong> (kernel), que actúa como una plantilla o sonda para definir la vecindad de la operación.
+    La Morfología se basa en el <strong>Elemento Estructurante</strong> (kernel), que actúa como una plantilla
+    para definir la vecindad de la operación.
   </p>
   <p>
-    <strong>Funcionamiento:</strong> Se define típicamente como una matriz de unos (<code>np.uint8</code>) y determina la forma y el tamaño de la vecindad para Erosión y Dilatación.
+    <strong>Funcionamiento:</strong> Se define comunmente como una matriz de unos (<code>np.uint8</code>) y
+    determina la forma y el tamaño de la vecindad para Erosión y Dilatación.
   </p>
 
   <pre><code># Definición del Elemento Estructurante (Kernel) de 5x5
@@ -229,7 +230,9 @@ linux_binaria = np.where(linux_gray >= 150, 255, 0).astype(np.uint8)
 
   <h4>4.2.1. Erosión (<em>I ⊖ K</em>)</h4>
   <p>
-    <strong>Funcionamiento:</strong> La Erosión encoge o "adelgaza" las áreas de primer plano (blancas). Un píxel central se mantiene blanco solo si el kernel completo cae dentro de la región blanca de la imagen; de lo contrario, se vuelve negro. Esto elimina pequeños objetos brillantes y reduce el tamaño de los objetos.
+    <strong>Funcionamiento:</strong> La Erosión adelgaza las áreas de primer plano (blancas).
+    Un píxel central se mantiene blanco solo si el kernel completo cae dentro de la región blanca de la imagen;
+    de lo contrario, se vuelve negro. Esto elimina pequeños objetos brillantes y reduce el tamaño de los objetos.
   </p>
 
   <pre><code># Aplica Erosión a la imagen en escala de grises o binaria
@@ -238,7 +241,9 @@ img_eroded = cv.erode(linux_gray, kernel, iterations=1)
 
   <h4>4.2.2. Dilatación (<em>I ⊕ K</em>)</h4>
   <p>
-    <strong>Funcionamiento:</strong> La Dilatación agranda o "engrosa" las áreas de primer plano (blancas). Un píxel central se vuelve blanco si al menos una parte del kernel coincide con un píxel blanco de la imagen. Esto rellena pequeños agujeros y une objetos cercanos.
+    <strong>Funcionamiento:</strong> La Dilatación agranda o engrosa las áreas de primer plano (blancas).
+    Un píxel central se vuelve blanco si al menos una parte del kernel coincide con un píxel blanco de la imagen. 
+    Esto rellena pequeños agujeros y une objetos cercanos.
   </p>
 
   <pre><code># Aplica Dilatación a la imagen
@@ -247,13 +252,16 @@ img_dilated = cv.dilate(linux_gray, kernel, iterations=1)
 
   <h3>4.3. Apertura y Cierre</h3>
   <p>
-    Son operaciones compuestas que utilizan <code>cv.morphologyEx</code> para aplicar secuencias de Erosión y Dilatación, con propósitos de limpieza específicos.
+    Son operaciones compuestas que utilizan <code>cv.morphologyEx</code> para aplicar secuencias de Erosión y Dilatación,
+    con propósitos de limpieza en areas específicas.
   </p>
 
   <h4>4.3.1. Apertura (<em>I ∘ K</em>)</h4>
   <p>
-    <strong>Funcionamiento:</strong> Es la Erosión seguida de la Dilatación. Se usa para eliminar el ruido (pequeños puntos blancos) sin afectar significativamente la forma de los objetos grandes. La erosión inicial elimina el ruido, y la dilatación posterior restaura el tamaño original de los objetos principales.
-  </p>
+    <strong>Funcionamiento:</strong> Es la Erosión seguida de la Dilatación. Se usa para eliminar el 
+    ruido (pequeños puntos blancos) sin afectar significativamente la forma de los objetos grandes. 
+    La erosión inicial elimina el ruido, y la dilatación posterior restaura el tamaño original de los objetos principales.
+  </p> 
 
   <pre><code># Apertura: Elimina el ruido blanco (cv.MORPH_OPEN)
 img_open = cv.morphologyEx(linux_binaria, cv.MORPH_OPEN, kernel)
@@ -261,7 +269,8 @@ img_open = cv.morphologyEx(linux_binaria, cv.MORPH_OPEN, kernel)
 
   <h4>4.3.2. Cierre (<em>I • K</em>)</h4>
   <p>
-    <strong>Funcionamiento:</strong> Es la Dilatación seguida de la Erosión. Se usa para rellenar pequeños agujeros dentro de los objetos y cerrar brechas o rupturas finas en su contorno.
+    <strong>Funcionamiento:</strong> Es la Dilatación seguida de la Erosión. Se usa para rellenar pequeños agujeros
+    dentro de los objetos y cerrar brechas o rupturas finas en su contorno.
   </p>
 
   <pre><code># Cierre: Rellena agujeros (cv.MORPH_CLOSE)
@@ -270,12 +279,15 @@ img_close = cv.morphologyEx(linux_binaria, cv.MORPH_CLOSE, kernel)
 
   <h3>4.4. Transformaciones Avanzadas y Extracción de Bordes</h3>
   <p>
-    Estas son transformaciones que se obtienen restando los resultados de operaciones morfológicas, permitiendo extraer características específicas de la forma.
+    Estas son transformaciones que se obtienen restando los resultados de operaciones morfológicas,
+    permitiendo extraer características específicas de la forma.
   </p>
 
-  <h4>4.4.1. Gradiente Morfológico (Extracción de Bordes)</h4>
+  <h4>4.4.1. Extracción de Bordes</h4>
   <p>
-    <strong>Funcionamiento:</strong> Se calcula como la diferencia entre la imagen dilatada y la erosionada (<em>Dilatación - Erosión</em>). Su resultado aísla el anillo de píxeles que constituye el contorno del objeto, siendo un detector de bordes muy robusto.
+    <strong>Funcionamiento:</strong> Se calcula como la diferencia entre la imagen dilatada y la erosionada
+    (<em>Dilatación - Erosión</em>). Su resultado aísla el anillo de píxeles que constituye el contorno del objeto,
+    detectando asi los bordes.
   </p>
 
   <pre><code># Gradiente Morfológico: Dilatación - Erosión
@@ -287,7 +299,8 @@ img_gradiente = cv.morphologyEx(linux_binaria, cv.MORPH_GRADIENT, kernel)
 
   <h4>4.4.2. Top Hat y Black Hat (Transformaciones de Realce)</h4>
   <p>
-    <strong>Funcionamiento:</strong> Se utilizan para corregir fondos no uniformes o extraer elementos de la imagen que son más pequeños que el kernel.
+    <strong>Funcionamiento:</strong> Se utilizan para corregir fondos no uniformes o extraer elementos de la 
+    imagen que son más pequeños que el kernel.
   </p>
   <ul>
     <li><strong>Top Hat:</strong> Extrae elementos brillantes pequeños (<em>Original - Apertura</em>).</li>
@@ -321,7 +334,15 @@ img_black_hat = cv.morphologyEx(linux_binaria, cv.MORPH_BLACKHAT, kernel)
       <p><strong>Integrante 2 (Miguel):</strong> 
         A lo largo de la semana de estudio sobre Procesamiento Digital de Imágenes, el equipo fortaleció su comprensión sobre cómo los sistemas informáticos pueden analizar y transformar imágenes para obtener información útil. Los integrantes coincidieron en que uno de los mayores retos fue dominar el uso de filtros de convolución y transformaciones geométricas, ya que implican tanto fundamentos matemáticos como su aplicación práctica en entornos de programación. Asimismo, el tema de segmentación resultó especialmente relevante, pues permitió comprender cómo aislar regiones específicas de una imagen y reconocer patrones mediante técnicas de umbralización y detección de bordes. En conjunto, el equipo reconoce que este aprendizaje no solo aportó bases teóricas sólidas, sino también herramientas aplicables a campos como la visión por computadora, la inteligencia artificial y la seguridad informática, áreas en las que planean aplicar los conocimientos adquiridos.
       </p>
-      <p><strong>Integrante 3 (Carol):</strong> Durante este periodo de clases, los temas vistos sobre procesamiento digital de imágenes me ayudaron a comprender muchas cosas, estre ellas cómo las operaciones matemáticas y lógicas permiten modificar, analizar y mejorar imágenes, algo que opino que es un poco complejo debido a todos los conocimientos que involucra. Aprendí tambien que el filtrado es de gram importancia para cosas como eliminar o resaltar detalles,  identificar los límites de los objetos, asi tambien las transformaciones que ajustan la forma y estructura de las regiones en una imagen. En conjunto, estos conceptos muestran cómo a partir de principios sencillos como el uso de un kernel se pueden lograr resultados complejos que son la base de muchos sistemas de visión artificial actuales.</p>
+      <p><strong>Integrante 3 (Carol):</strong> Durante este periodo de clases, los temas vistos sobre procesamiento de 
+        imágenes me ayudaron a comprender muchas cosas, estre ellas cómo las operaciones matemáticas y 
+        lógicas permiten modificar, analizar y mejorar imágenes, algo que opino que es un poco complejo debido a todos 
+        los conocimientos que involucra. Aprendí tambien que el filtrado es de gran importancia para cosas como eliminar 
+        o resaltar detalles,  identificar los límites de los objetos, asi tambien las transformaciones que ajustan la 
+        forma y estructura de las regiones en una imagen, es importante saber como podemos recuperar imagenes o ver 
+        detalles que a simple vista no puede verse, lo mejor es que todo esto son procesos, formulas que solo necesitan aplicarse.
+        En conjunto, estos conceptos muestran cómo a partir de principios sencillos como el uso de un kernel se pueden 
+        lograr resultados complejos que son la base de muchos sistemas de imágenes actuales.</p>
     </section>
   </main>
 
