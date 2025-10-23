@@ -185,13 +185,13 @@ lena_realzada = lena_gray + lena_laplaciana
     <em>Dilatación</em> y la <em>Erosión</em> de una imagen:
     </p>
   <p style="text-align:center;">
-    <code>Gradiente = Dilatación(I) - Erosión(I)</code>
+    <code>Gradiente = Dilatación- Erosión</code>
   </p>
   <p>
     Esta resta aísla el anillo de píxeles que forman el borde, proporcionando un contorno más fuerte.
   </p>
   <pre><code class="language-python">
-# Asumimos que 'linux_bin_inv' (imagen binaria) y 'kernel' están definidos.
+# Asumimos que la 'imagen binaria' y 'kernel' están definidos.
 # Aplicación del Gradiente Morfológico
 img_gradiente = cv.morphologyEx(linux_bin_inv, cv.MORPH_GRADIENT, kernel)
   </code></pre>
