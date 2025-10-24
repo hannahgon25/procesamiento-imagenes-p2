@@ -33,13 +33,147 @@
   </nav>
 
   <main>
-    <!-- TEMA 1 -->
-    <section id="tema1">
-      <h2>1. [Tema 1 (Hannah)]</h2>
-      <p>
-        [Contenido del tema 1]
-      </p>
-    </section>
+<!-- TEMA 1 -->
+<section id="tema1">
+  <h2>1. Procesamiento de Histogramas,  Transformación a Espacios de Color e introducción a filtrado [Hannah]</h2>
+
+  <h3>1.1 Procesamiento de Histogramas</h3>
+  <p>
+    El procesamiento de histogramas es una técnica fundamental en el análisis digital de imágenes,
+    ya que permite estudiar la distribución de intensidades de una imagen. El histograma muestra la
+    frecuencia de aparición de cada nivel de gris o componente de color, y es útil para tareas como
+    la mejora del contraste, la detección de bordes o la segmentación de regiones.
+  </p>
+
+  <p>
+    En Python, el histograma puede obtenerse utilizando bibliotecas como <code>OpenCV</code> y
+    <code>Matplotlib</code>. El siguiente ejemplo muestra cómo calcular y graficar el histograma de
+    una imagen en escala de grises:
+  </p>
+
+  <pre><code class="language-python">
+import cv2
+import matplotlib.pyplot as plt
+
+# Cargar imagen y convertir a escala de grises
+img = cv2.imread('imagen.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Calcular histograma
+hist = cv2.calcHist([img], [0], None, [256], [0, 256])
+
+# Mostrar imagen e histograma
+plt.figure(figsize=(10,4))
+plt.subplot(1,2,1), plt.imshow(img, cmap='gray'), plt.title('Imagen Original')
+plt.subplot(1,2,2), plt.plot(hist, color='black'), plt.title('Histograma de Intensidades')
+plt.show()
+  </code></pre>
+
+  <p>
+    Este tipo de análisis permite identificar si una imagen está subexpuesta, sobreexpuesta o bien
+    distribuida en términos de intensidad. Además, sirve como base para aplicar técnicas de
+    ecualización.
+  </p>
+
+  <h3>1.2 Transformación a Espacios de Color (YCbCr, HSV, etc.)</h3>
+  <p>
+    La transformación de una imagen desde el espacio de color RGB hacia otros espacios como YCbCr o
+    HSV es esencial para separar información de luminancia y crominancia, facilitando operaciones
+    como la detección de color, la segmentación o el ajuste de brillo y saturación.
+  </p>
+
+  <p>
+    En el espacio <strong>YCbCr</strong>, el componente <em>Y</em> representa la luminancia (brillo),
+    mientras que <em>Cb</em> y <em>Cr</em> representan las diferencias de color (azul y rojo,
+    respectivamente). En cambio, en el espacio <strong>HSV</strong>, los componentes son
+    <em>Hue</em> (tono), <em>Saturation</em> (saturación) y <em>Value</em> (valor o brillo).
+  </p>
+
+  <pre><code class="language-python">
+# Transformación de RGB a YCbCr y HSV
+img_color = cv2.imread('imagen.jpg')
+
+# Conversión a diferentes espacios de color
+img_ycbcr = cv2.cvtColor(img_color, cv2.COLOR_BGR2YCrCb)
+img_hsv = cv2.cvtColor(img_color, cv2.COLOR_BGR2HSV)
+
+# Visualización de componentes individuales
+y, cb, cr = cv2.split(img_ycbcr)
+h, s, v = cv2.split(img_hsv)
+
+# Mostrar resultados
+titles = ['Canal Y', 'Canal Cb', 'Canal Cr']
+for i, channel in enumerate([y, cb, cr]):
+    plt.subplot(1,3,i+1)
+    plt.imshow(channel, cmap='gray')
+    plt.title(titles[i])
+plt.show()
+  </code></pre>
+
+  <p>
+    Estas transformaciones permiten manipular de manera independiente el brillo o el color, lo cual
+    resulta útil para el procesamiento selectivo de imágenes, como en la detección de tonos de piel
+    o el análisis de objetos específicos por su color característico.
+  </p>
+
+  <h3>1.3 Ecualización del Histograma</h3>
+  <p>
+    La ecualización del histograma busca mejorar el contraste de una imagen redistribuyendo los
+    niveles de intensidad para que se utilice todo el rango disponible. Esta técnica resalta detalles
+    en zonas oscuras o claras y mejora la percepción visual.
+  </p>
+
+  <pre><code class="language-python">
+# Ecualización global del histograma
+img_eq = cv2.equalizeHist(img)
+
+# Mostrar resultados
+plt.figure(figsize=(10,4))
+plt.subplot(1,2,1), plt.imshow(img, cmap='gray'), plt.title('Original')
+plt.subplot(1,2,2), plt.imshow(img_eq, cmap='gray'), plt.title('Ecualizada')
+plt.show()
+  </code></pre>
+
+  <p>
+    El resultado es una imagen con mayor contraste y una distribución de intensidades más uniforme.
+    Sin embargo, en imágenes con iluminación variable, la ecualización global puede producir artefactos
+    o exagerar el ruido.
+  </p>
+
+  <h3>1.4 Ecualización Local (CLAHE)</h3>
+  <p>
+    Para evitar los problemas de la ecualización global, se utiliza la <strong>ecualización local</strong>,
+    también conocida como <em>CLAHE</em> (Contrast Limited Adaptive Histogram Equalization). Esta técnica
+    divide la imagen en pequeñas regiones (<em>tiles</em>) y aplica ecualización individualmente, limitando
+    el contraste excesivo.
+  </p>
+
+  <pre><code class="language-python">
+# Ecualización local adaptativa (CLAHE)
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+img_clahe = clahe.apply(img)
+
+# Mostrar comparación
+plt.figure(figsize=(10,4))
+plt.subplot(1,2,1), plt.imshow(img_eq, cmap='gray'), plt.title('Ecualización Global')
+plt.subplot(1,2,2), plt.imshow(img_clahe, cmap='gray'), plt.title('Ecualización Local (CLAHE)')
+plt.show()
+  </code></pre>
+
+  <p>
+    Este método es especialmente eficaz en imágenes con iluminación desigual o en aplicaciones médicas
+    y satelitales, donde se requiere preservar los detalles locales sin generar sobrecontraste.
+  </p>
+
+  <h3>Conclusión del Tema</h3>
+  <p>
+    En resumen, el procesamiento de histogramas y las transformaciones de color son herramientas
+    esenciales para la mejora y análisis de imágenes digitales. Mientras la ecualización global permite
+    mejorar el contraste general, la ecualización local ofrece resultados más equilibrados en regiones
+    con diferentes condiciones de iluminación. Las transformaciones a espacios de color como YCbCr y HSV
+    amplían las posibilidades de análisis al separar la información de luminancia y crominancia.
+  </p>
+</section>
+
 
     <!-- TEMA 2 -->
     <section id="tema2">
