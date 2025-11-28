@@ -124,6 +124,48 @@
     consistencia entre imágenes, como comprobar si dos resultados son idénticos a nivel de píxel.
   </p>
 
+  <h2>2. Umbralización </h2>
+  <p>
+    La Umbralización es la base de la segmentación, y para ello utilizamos distintos métodos que varían según las condiciones de iluminación de la imagen.
+  </p>
+
+  <h3>1. Umbralización Global Fija</h3>
+  <p>
+    Es el método más básico, donde se selecciona un único valor de umbral (<strong>T</strong>) que se aplica a todos los píxeles de la imagen por igual. 
+    Su implementación se realiza utilizando la función <code>cv.threshold()</code> de OpenCV o la lógica condicional <code>np.where()</code> de NumPy.
+  </p>
+
+  <h3>2. Umbralización Automática</h3>
+
+  <h4>Método Otsu (<code>cv.THRESH_OTSU</code>)</h4>
+  <p>
+    Analiza el histograma de la imagen y calcula el umbral óptimo que minimiza la varianza dentro de cada clase, buscando una separación clara entre los dos picos principales del histograma.
+  </p>
+
+  <h4>Método Triangle (<code>cv.THRESH_TRIANGLE</code>)</h4>
+  <p>
+    Traza una línea recta sobre el histograma y selecciona el punto con la mayor distancia a esa línea. Este método es especialmente útil cuando el histograma está dominado por un solo pico grande.
+  </p>
+
+  <h3>3. Umbralización Adaptativa</h3>
+  <p>
+    Es la técnica ideal para imágenes con iluminación irregular. El umbral (<strong>T</strong>) no es único; en su lugar, se calcula un valor distinto para cada píxel basado en su vecindario local.
+    Para implementarlo se utiliza <code>cv.adaptiveThreshold()</code>.
+  </p>
+
+  <p><strong>Parámetros Esenciales:</strong></p>
+  <ul>
+    <li><strong>Método Adaptativo:</strong> Define cómo se calcula el umbral local (ej. <code>cv.ADAPTIVE_THRESH_MEAN_C</code> basado en el promedio).</li>
+    <li><strong>Tamaño de Bloque:</strong> Área local (ej. 21×21 píxeles) que se utiliza para calcular el valor del umbral.</li>
+    <li><strong>Constante C:</strong> Valor restado al umbral local para ajustar su sensibilidad.</li>
+  </ul>
+
+  <p>
+    El propósito principal de este método es lograr una segmentación limpia incluso en imágenes con sombras o variaciones fuertes de iluminación,
+    obteniendo así una base adecuada para aplicar técnicas de Morfología Matemática.
+  </p>
+</section>
+
 </section>
 
 
