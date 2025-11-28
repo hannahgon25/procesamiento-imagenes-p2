@@ -23,6 +23,7 @@
   
   <nav>
     <ul>
+        <li><a href="#intro"> Introducción </a></li>
       <li><a href="#tema1">1. Tema 1</a></li>
       <li><a href="#tema2">2. Tema 2</a></li>
       <li><a href="#tema3">3. Tema 3</a></li>
@@ -32,11 +33,99 @@
   </nav>
 
   <main>
+ <!-- INTRODUCCIÓN -->
+    <section id="intro">
+      <h2>1. Introducción</h2>
 
+<details>
+ <p>
+    En estas últimas semanas realizamos un repaso de conceptos importantes sobre morfología matemática y 
+    umbralización. Con estos temas de tercer parcial finalizamos este curso, añadiendo algunas técnicas ya 
+    avanzadas a las que hemos aprendido y que han sido de gran aprendizaje durante el curso.
+  </p>>
+  
+  
 <section id="tema1">
   <h2>1. Tema 1 (Carol)</h2>
-  <p></p>
+
+  <h3>1. Binarización y Control de Polaridad</h3>
+  <p>
+    Debemos empezar con preparar la imagen, asegurando que el objeto que nos interese esté 
+    correctamente segmentado para las operaciones morfológicas.
+  </p>
+
+  <h4>A. Binarización </h4>
+  <p>
+    Consiste en la conversión de la imagen de escala de grises a un formato binario, valores 0 y 255.<br>
+    <strong>Se realiza de la siguiente manera: </strong> Uso de <code>cv.threshold()</code> de OpenCV o de NumPy <code>np.where()</code>.
+  </p>
+
+  <h4>B. Inversión de Polaridad</h4>
+  <p>
+    Es la técnica para asegurar que el objeto esté representado en blanco (255) y el fondo en negro (0), o 
+    viceversa.<br>
+    <strong>Se realiza de la siguiente manera: </strong> Uso del operador <code>~</code> (Bitwise NOT) de NumPy para invertir 
+    todos los valores de píxel rápidamente. <br>
+    <strong>Inversión: </strong> Utilización de la bandera <code>cv.THRESH_BINARY_INV</code> durante la 
+    binarización para lograr la inversión directamente.
+  </p>
+
+  <h3>2. Morfología Matemática: Operaciones Fundamentales</h3>
+  <p>
+    En la Morfología Matemática se usa un  <strong>Elemento Estructurante (Kernel)</strong> para modificar la forma de los objetos.
+  </p>
+
+  <h4>A. Dilatación </h4>
+  <p>
+    Operación que expande o agranda las áreas blancas del objeto.<br>
+    <strong>Se realiza de la siguiente manera: </strong> <code>cv.dilate(imagen, kernel)</code>.<br>
+    <strong>Aplicación:</strong> Fusión de componentes conexos y relleno de huecos.
+  </p>
+
+  <h4>B. Erosión </h4>
+  <p>
+    Operación que reduce las áreas blancas del objeto.<br>
+    <strong>Se realiza de la siguiente manera: </strong> <code>cv.erode(imagen, kernel)</code>.<br>
+    <strong>Aplicación:</strong> Eliminación de ruido y separación de objetos ligeramente unidos.
+  </p>
+
+  <h4>C. Aplicación Iterativa</h4>
+  <p>
+    Las operaciones pueden intensificarse utilizando <code>iterations = N</code>, aplicando dilatación 
+    o erosión múltiples veces para lograr efectos más marcados.
+  </p>
+
+  <h3>3. Aplicaciones Compuestas: Gradiente Morfológico</h3>
+
+  <h4>A. Gradiente Morfológico Externo (Detección de Contornos)</h4>
+  <p>
+    Técnica utilizada para extraer únicamente el contorno exterior de los objetos.<br>
+    <strong>Fórmula:</strong><br>
+    <code>Borde Externo = Dilatación(Imagen) – Imagen Original</code><br>
+    <strong>Efecto:</strong> Se obtiene una línea delgada representando el contorno externo.
+  </p>
+
+  <h4>B. Resta de Imágenes</h4>
+  <p>
+    Implementada con el operador <code>-</code> de NumPy, píxel por píxel.
+  </p>
+
+  <h3>4. Manipulación de Arrays con NumPy</h3>
+
+  <h4>A. Operaciones Lógicas</h4>
+  <p>
+    <code>np.where()</code> es usado tanto para binarización como para aplicar cualquier regla o 
+    asignación condicional a los píxeles.
+  </p>
+
+  <h4>B. Verificación de Arrays</h4>
+  <p>
+    Funciones como <code>np.unique()</code> y <code>.all()</code> permiten verificar la 
+    consistencia entre imágenes, como comprobar si dos resultados son idénticos a nivel de píxel.
+  </p>
+
 </section>
+
 
 <section id="tema2">
   <h2>2. Tema 2 (Miguel)</h2>
