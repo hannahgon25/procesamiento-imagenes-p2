@@ -2,16 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reporte Segundo Parcial - Procesamiento de Imágenes</title>
+  <title>Reporte Tercer Parcial - Procesamiento de Imágenes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>📋 Reporte Segundo Parcial</h1>
+    <h1>📋 Reporte Tercer Parcial</h1>
     <h2>Procesamiento de Imágenes</h2>
     <p>Equipo: Panteras Verdes xD</p>
-    
-    <!-- Apartado desplegable -->
+
     <details>
       <summary><b>Integrantes</b></summary>
       <ul>
@@ -24,472 +23,43 @@
   
   <nav>
     <ul>
-      <li><a href="#tema1">1. Histogramas, Espacios de Color e introducción a filtrado</a></li>
-      <li><a href="#tema2">2. Procesamiento Digital de Imágenes</a></li>
-      <li><a href="#tema3">3. Filtrado y Morfología Matemática</a></li>
+      <li><a href="#tema1">1. Tema 1</a></li>
+      <li><a href="#tema2">2. Tema 2</a></li>
+      <li><a href="#tema3">3. Tema 3</a></li>
       <li><a href="#abstract">4. Abstract (English)</a></li>
       <li><a href="#conclusiones">5. Conclusiones</a></li>
     </ul>
   </nav>
 
   <main>
-<!-- TEMA 1 -->
+
 <section id="tema1">
-  <h2>1. Procesamiento de Histogramas,  Transformación a Espacios de Color e introducción a filtrado [Hannah]</h2>
-
-  <h3>1.1 Procesamiento de Histogramas</h3>
-  <p>
-    El procesamiento de histogramas es una técnica fundamental en el análisis digital de imágenes,
-    ya que permite estudiar la distribución de intensidades de una imagen. El histograma muestra la
-    frecuencia de aparición de cada nivel de gris o componente de color, y es útil para tareas como
-    la mejora del contraste, la detección de bordes o la segmentación de regiones.
-  </p>
-
-  <p>
-    En Python, el histograma puede obtenerse utilizando bibliotecas como <code>OpenCV</code> y
-    <code>Matplotlib</code>. El siguiente ejemplo muestra cómo calcular y graficar el histograma de
-    una imagen en escala de grises:
-  </p>
-
-  <pre><code class="language-python">
-import cv2
-import matplotlib.pyplot as plt
-
-# Cargar imagen y convertir a escala de grises
-img = cv2.imread('imagen.jpg', cv2.IMREAD_GRAYSCALE)
-
-# Calcular histograma
-hist = cv2.calcHist([img], [0], None, [256], [0, 256])
-
-# Mostrar imagen e histograma
-plt.figure(figsize=(10,4))
-plt.subplot(1,2,1), plt.imshow(img, cmap='gray'), plt.title('Imagen Original')
-plt.subplot(1,2,2), plt.plot(hist, color='black'), plt.title('Histograma de Intensidades')
-plt.show()
-  </code></pre>
-
-  <p>
-    Este tipo de análisis permite identificar si una imagen está subexpuesta, sobreexpuesta o bien
-    distribuida en términos de intensidad. Además, sirve como base para aplicar técnicas de
-    ecualización.
-  </p>
-
-  <h3>1.2 Transformación a Espacios de Color (YCbCr, HSV, etc.)</h3>
-  <p>
-    La transformación de una imagen desde el espacio de color RGB hacia otros espacios como YCbCr o
-    HSV es esencial para separar información de luminancia y crominancia, facilitando operaciones
-    como la detección de color, la segmentación o el ajuste de brillo y saturación.
-  </p>
-
-  <p>
-    En el espacio <strong>YCbCr</strong>, el componente <em>Y</em> representa la luminancia (brillo),
-    mientras que <em>Cb</em> y <em>Cr</em> representan las diferencias de color (azul y rojo,
-    respectivamente). En cambio, en el espacio <strong>HSV</strong>, los componentes son
-    <em>Hue</em> (tono), <em>Saturation</em> (saturación) y <em>Value</em> (valor o brillo).
-  </p>
-
-  <pre><code class="language-python">
-# Transformación de RGB a YCbCr y HSV
-img_color = cv2.imread('imagen.jpg')
-
-# Conversión a diferentes espacios de color
-img_ycbcr = cv2.cvtColor(img_color, cv2.COLOR_BGR2YCrCb)
-img_hsv = cv2.cvtColor(img_color, cv2.COLOR_BGR2HSV)
-
-# Visualización de componentes individuales
-y, cb, cr = cv2.split(img_ycbcr)
-h, s, v = cv2.split(img_hsv)
-
-# Mostrar resultados
-titles = ['Canal Y', 'Canal Cb', 'Canal Cr']
-for i, channel in enumerate([y, cb, cr]):
-    plt.subplot(1,3,i+1)
-    plt.imshow(channel, cmap='gray')
-    plt.title(titles[i])
-plt.show()
-  </code></pre>
-
-  <p>
-    Estas transformaciones permiten manipular de manera independiente el brillo o el color, lo cual
-    resulta útil para el procesamiento selectivo de imágenes, como en la detección de tonos de piel
-    o el análisis de objetos específicos por su color característico.
-  </p>
-
-  <h3>1.3 Ecualización del Histograma</h3>
-  <p>
-    La ecualización del histograma busca mejorar el contraste de una imagen redistribuyendo los
-    niveles de intensidad para que se utilice todo el rango disponible. Esta técnica resalta detalles
-    en zonas oscuras o claras y mejora la percepción visual.
-  </p>
-
-  <pre><code class="language-python">
-# Ecualización global del histograma
-img_eq = cv2.equalizeHist(img)
-
-# Mostrar resultados
-plt.figure(figsize=(10,4))
-plt.subplot(1,2,1), plt.imshow(img, cmap='gray'), plt.title('Original')
-plt.subplot(1,2,2), plt.imshow(img_eq, cmap='gray'), plt.title('Ecualizada')
-plt.show()
-  </code></pre>
-
-  <p>
-    El resultado es una imagen con mayor contraste y una distribución de intensidades más uniforme.
-    Sin embargo, en imágenes con iluminación variable, la ecualización global puede producir artefactos
-    o exagerar el ruido.
-  </p>
-
-  <h3>1.4 Ecualización Local (CLAHE)</h3>
-  <p>
-    Para evitar los problemas de la ecualización global, se utiliza la <strong>ecualización local</strong>,
-    también conocida como <em>CLAHE</em>. Esta técnica
-    divide la imagen en pequeñas regiones (<em>tiles</em>) y aplica ecualización individualmente, limitando
-    el contraste excesivo.
-  </p>
-
-  <pre><code class="language-python">
-# Ecualización local adaptativa (CLAHE)
-clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-img_clahe = clahe.apply(img)
-
-# Mostrar comparación
-plt.figure(figsize=(10,4))
-plt.subplot(1,2,1), plt.imshow(img_eq, cmap='gray'), plt.title('Ecualización Global')
-plt.subplot(1,2,2), plt.imshow(img_clahe, cmap='gray'), plt.title('Ecualización Local (CLAHE)')
-plt.show()
-  </code></pre>
-
-  <p>
-    Este método es especialmente eficaz en imágenes con iluminación desigual o en aplicaciones médicas
-    y satelitales, donde se requiere preservar los detalles locales sin generar sobrecontraste.
-  </p>
-  <h3>1.3 Introducción a filtrado</h3>
-  <p>A continuación se presenta un enlace a una pizarra de cambas para entendender mejor como funciona el codigo o filtrado de una imagen, con cada iteriación</p>
-  <p>Visualización interactiva disponible en <a href="https://www.canva.com/design/DAG0kH3DdSY/kdreVo4REGddZAz1BWAjaA/edit?utm_content=DAG0kH3DdSY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton">este enlace de Canvas</a>.</p>
-
-
-  <h3>Conclusión del Tema</h3>
-  <p>
-    En resumen, el procesamiento de histogramas y las transformaciones de color son herramientas
-    esenciales para la mejora y análisis de imágenes digitales. Mientras la ecualización global permite
-    mejorar el contraste general, la ecualización local ofrece resultados más equilibrados en regiones
-    con diferentes condiciones de iluminación. Las transformaciones a espacios de color como YCbCr y HSV
-    amplían las posibilidades de análisis al separar la información de luminancia y crominancia.
-  </p>
+  <h2>1. Tema 1 (Hannah)</h2>
+  <p></p>
 </section>
 
-
-    <!-- TEMA 2 -->
-    <section id="tema2">
-      <h2>2. Procesamiento Digital de Imágenes (Miguel)</h2>
-      <p>
-        En esta sección se abordaron los fundamentos del procesamiento digital de imágenes (PDI), comenzando con la adquisición y digitalización de imágenes, donde se explicó cómo una imagen analógica se convierte en formato digital mediante sensores que capturan la información luminosa y la transforman en una matriz numérica. Se revisaron los conceptos de muestreo espacial y de intensidad, esenciales para representar correctamente los detalles de la imagen.
-      </p>
-      <p>
-        Posteriormente, se analizó la representación y almacenamiento de imágenes, entendiendo que cada imagen se compone de una matriz de píxeles cuyos valores determinan su intensidad o color. Se discutió la importancia de la resolución, la profundidad de bits y los formatos más comunes como BMP, PNG y JPG, destacando sus ventajas según el uso y el nivel de compresión requerido.
-      </p>
-      <p>
-        En cuanto a las operaciones puntuales y de contraste, se exploraron técnicas que modifican directamente la intensidad de los píxeles, tales como la ecualización de histograma, el ajuste de brillo y contraste, y la normalización, las cuales permiten mejorar la apariencia visual o resaltar detalles relevantes de la imagen.
-      </p>
-      <p>
-        También se presentaron los filtros espaciales y la convolución, herramientas esenciales para el procesamiento local de píxeles. Se revisaron filtros lineales (como el promedio y el gaussiano) y no lineales (como el de mediana), aplicados al suavizado, la detección de bordes y la eliminación de ruido. Además, se explicó el papel de las máscaras y el operador de convolución en la manipulación de la imagen.
-      </p>
-      <p>
-        En el tema de transformaciones geométricas, se describieron procesos como la traslación, rotación y escalado de imágenes, los cuales modifican la posición y orientación de los píxeles mediante coordenadas homogéneas y transformaciones matriciales.
-      </p>
-      <p>
-        Más adelante, se abordó la segmentación y el análisis morfológico, que incluyen métodos para dividir una imagen en regiones significativas utilizando técnicas de umbralización, detección de contornos y operaciones morfológicas como la dilatación, erosión, apertura y cierre, útiles en el reconocimiento de objetos y análisis estructural.
-      </p>
-      <p>
-        Finalmente, se exploraron diversas aplicaciones del PDI, mostrando cómo estos conceptos se emplean en áreas como la visión por computadora, el análisis médico y los sistemas de seguridad, demostrando el impacto y la versatilidad del procesamiento digital de imágenes en la actualidad.
-      </p>
-    </section>
-
-   
-    <section id="tema3">
-      <h2>3. Filtrado y Morfología Matemática (Carol)</h2>
-      <p>
-
-
-  <h3>I. Fundamentos, Configuración y Manipulación Numérica</h3>
-
-  <p>
-   
-  <h3>3. Filtrado y Detección de Bordes en PDI</h3>
-  <p>
-    Esta sección cubre las técnicas mas importantes de manipulación de vecindades (filtrado)
-    utilizadas para suavizar imágenes, eliminar ruido y resaltar bordes.
-  </p>
-
-  <h3>3.1. Kernels / Elementos Estructurantes</h3>
-  <p>
-    Un <strong>kernel</strong> es una matriz pequeña que define la vecindad de píxeles
-    que influirá en el valor del píxel central. La disposición y los valores de sus elementos
-    determinan la operación de filtrado las cuales son: suavizado, detección de bordes, entre otros.
-  </p>
-  <p>
-    <strong>Funcionamiento:</strong> Se definen como arrays de NumPy con el tipo de dato necesario
-    (normalmente <code>np.float32</code>) para convolución. Los valores internos representan
-    la cantidad aplicada a los píxeles vecinos.
-  </p>
-  <pre><code class="language-python">
-# Kernel para Filtro Promedio (caja 3x3 sin normalizar)
-kernel_caja = np.ones((3, 3), np.float32)
-
-# Kernel para Filtro Laplaciano (ejemplo de 4-vecinos)
-kernel_laplaciano = np.array([[ 0,  1,  0],
-                              [ 1, -4,  1],
-                              [ 0,  1,  0]], dtype=np.float32)
-  </code></pre>
-
-  <h3>3.2. Convolución y Correlación</h3>
-  <p>
-    La <strong>convolución</strong> es la operación fundamental del filtrado lineal.
-    Para esto se tiene que voltear el kernel 180° y calcular la suma del producto del kernel
-    con los píxeles de la vecindad. En codigo se aplica mediante la función <code>cv.filter2D()</code>.
-  </p>
-  <pre><code class="language-python">
-# Se asume que 'kernel_normalizado' ya está definido (ej. kernel_caja / 9)
-apple_filtrada = cv.filter2D(apple, -1, kernel_normalizado)
-  </code></pre>
-
-  <h3>3.3. Filtro de Caja</h3>
-  <p>
-    Es un filtro que realiza la operación de suavizado.
-    Su principal efecto es la atenuación del ruido de alta frecuencia y los detalles finos.
-  </p>
-  <p>
-    <strong>Funcionamiento:</strong> Reemplaza el valor de cada píxel con la media aritmética
-    de los píxeles en su vecindad. El kernel debe estar normalizado (la suma de sus elementos
-    es 1) para preservar el brillo general.
-  </p>
-  <pre><code class="language-python">
-# 1. Definición y Normalización del Kernel (3x3)
-kernel_caja = np.ones((3, 3), np.float32)
-kernel_normalizado = kernel_caja / 9
-
-# 2. Aplicación del Filtro
-apple_promediada = cv.filter2D(apple, -1, kernel_normalizado)
-  </code></pre>
-
-  <h3>3.4. Filtro de Mediana</h3>
-  <p>
-    Es un filtro <strong>no lineal</strong>, que sirve para eliminar el ruido
-    <em>Sal y Pimienta</em> (salt-and-pepper noise).
-  </p>
-  <p>
-    <strong>Funcionamiento:</strong> En lugar de calcular un promedio, el píxel central se
-    reemplaza con la mediana de todos los valores de intensidad dentro de la ventana del kernel.
-    Esto preserva mejor los bordes que el filtro de caja.
-  </p>
-  <pre><code class="language-python">
-# 1. Cargar imagen con ruido S&P (asumimos 'img_noise' está cargada)
-# img_noise = cv.imread("/ruta/a/images/s&p-noise.jpeg", 0)
-
-# Aplicar el Filtro de Mediana (kernel de 3x3)
-img_median = cv.medianBlur(img_noise, 3)
-  </code></pre>
-
-  <h3>3.5. Filtro Laplaciano</h3>
-  <p>
-    Es un filtro de <strong>paso alto</strong> que aproxima la segunda derivada.
-    Se utiliza para la detección y realce de bordes.
-  </p>
-  <p>
-    <strong>Funcionamiento:</strong> El kernel tiene una suma de pesos igual a cero
-    (<code>&sum;K = 0</code>). En regiones uniformes la respuesta es cero; en bordes,
-    donde la intensidad cambia rápidamente, la respuesta es alta o baja, de esta manera revelando el contorno.
-  </p>
-  <pre><code class="language-python">
-# 1. Definición del Kernel Laplaciano de 4-Vecinos
-kernel_laplaciano = np.array([[ 0,  1,  0],
-                              [ 1, -4,  1],
-                              [ 0,  1,  0]], dtype=np.float32)
-
-# 2. Detección de Bordes
-lena_laplaciana = cv.filter2D(lena_gray, -1, kernel_laplaciano)
-
-# 3. Realce de la Imagen
-lena_realzada = lena_gray + lena_laplaciana
-  </code></pre>
-
-  <h3>3.6. Gradiente</h3>
-  <p>
-    El término <strong>Gradiente</strong> hace referencia al <strong>Gradiente Morfológico</strong>,
-    un detector de contornos de gran potencia.
-  </p>
-  <p>
-    <strong>Funcionamiento (Gradiente Morfológico):</strong> Se calcula mediante la diferencia entre la
-    <em>Dilatación</em> y la <em>Erosión</em> de una imagen:
-    </p>
-  <p style="text-align:center;">
-    <code>Gradiente = Dilatación- Erosión</code>
-  </p>
-  <p>
-    Esta resta aísla el anillo de píxeles que forman el borde, proporcionando un contorno más fuerte.
-  </p>
-  <pre><code class="language-python">
-# Asumimos que la 'imagen binaria' y 'kernel' están definidos.
-# Aplicación del Gradiente Morfológico
-img_gradiente = cv.morphologyEx(linux_bin_inv, cv.MORPH_GRADIENT, kernel)
-  </code></pre>
+<section id="tema2">
+  <h2>2. Tema 2 (Miguel)</h2>
+  <p></p>
 </section>
 
-<section id="tema4">
-  <h3>4. Transformaciones Morfológicas</h3>
-  <p>
-    Las transformaciones morfológicas son operaciones no lineales que modifican la estructura de una imagen 
-    basándose en la forma, utilizando un <strong>Elemento Estructurante (Kernel)</strong>. 
-    Se aplican principalmente a imágenes binarias.
-  </p>
-
-  <h3>4.1. Conceptos Básicos y Elemento Estructurante</h3>
-  <p>
-    La Morfología se basa en el <strong>Elemento Estructurante</strong> (kernel), que actúa como una plantilla
-    para definir la vecindad de la operación.
-  </p>
-  <p>
-    <strong>Funcionamiento:</strong> Se define comunmente como una matriz de unos (<code>np.uint8</code>) y
-    determina la forma y el tamaño de la vecindad para Erosión y Dilatación.
-  </p>
-
-  <pre><code># Definición del Elemento Estructurante (Kernel) de 5x5
-kernel = np.ones((5, 5), np.uint8)
-
-# Binarización de una imagen para las operaciones morfológicas
-# Convierte píxeles >= 150 a blanco (255) y el resto a negro (0).
-linux_binaria = np.where(linux_gray >= 150, 255, 0).astype(np.uint8)
-  </code></pre>
-
-  <h3>4.2. Erosión y Dilatación</h3>
-  <p>
-    Estas son las dos operaciones fundamentales de la Morfología Matemática.
-  </p>
-
-  <h4>4.2.1. Erosión</h4>
-  <p>
-    <strong>Funcionamiento:</strong> La Erosión adelgaza las áreas de primer plano (blancas).
-    Un píxel central se mantiene blanco solo si el kernel completo cae dentro de la región blanca de la imagen;
-    de lo contrario, se vuelve negro. Esto elimina pequeños objetos brillantes y reduce el tamaño de los objetos.
-  </p>
-
-  <pre><code># Aplica Erosión a la imagen en escala de grises o binaria
-img_eroded = cv.erode(linux_gray, kernel, iterations=1)
-  </code></pre>
-
-  <h4>4.2.2. Dilatación</h4>
-  <p>
-    <strong>Funcionamiento:</strong> La Dilatación agranda o engrosa las áreas de primer plano (blancas).
-    Un píxel central se vuelve blanco si al menos una parte del kernel coincide con un píxel blanco de la imagen. 
-    Esto rellena pequeños agujeros y une objetos cercanos.
-  </p>
-
-  <pre><code># Aplica Dilatación a la imagen
-img_dilated = cv.dilate(linux_gray, kernel, iterations=1)
-  </code></pre>
-
-  <h3>4.3. Apertura y Cierre</h3>
-  <p>
-    Son operaciones compuestas que utilizan <code>cv.morphologyEx</code> para aplicar secuencias de Erosión y Dilatación,
-    con propósitos de limpieza en areas específicas.
-  </p>
-
-  <h4>4.3.1. Apertura</h4>
-  <p>
-    <strong>Funcionamiento:</strong> Es la Erosión seguida de la Dilatación. Se usa para eliminar el 
-    ruido (pequeños puntos blancos) sin afectar significativamente la forma de los objetos grandes. 
-    La erosión inicial elimina el ruido, y la dilatación posterior restaura el tamaño original de los objetos principales.
-  </p> 
-
-  <pre><code># Apertura: Elimina el ruido blanco (cv.MORPH_OPEN)
-img_open = cv.morphologyEx(linux_binaria, cv.MORPH_OPEN, kernel)
-  </code></pre>
-
-  <h4>4.3.2. Cierre</h4>
-  <p>
-    <strong>Funcionamiento:</strong> Es la Dilatación seguida de la Erosión. Se usa para rellenar pequeños agujeros
-    dentro de los objetos y cerrar brechas o rupturas finas en su contorno.
-  </p>
-
-  <pre><code># Cierre: Rellena agujeros (cv.MORPH_CLOSE)
-img_close = cv.morphologyEx(linux_binaria, cv.MORPH_CLOSE, kernel)
-  </code></pre>
-
-  <h3>4.4. Transformaciones Avanzadas y Extracción de Bordes</h3>
-  <p>
-    Estas son transformaciones que se obtienen restando los resultados de operaciones morfológicas,
-    permitiendo extraer características específicas de la forma.
-  </p>
-
-  <h4>4.4.1. Extracción de Bordes</h4>
-  <p>
-    <strong>Funcionamiento:</strong> Se calcula como la diferencia entre la imagen dilatada y la erosionada
-    (<em>Dilatación - Erosión</em>). Su resultado aísla el anillo de píxeles que constituye el contorno del objeto,
-    detectando asi los bordes.
-  </p>
-
-  <pre><code># Gradiente Morfológico: Dilatación - Erosión
-img_gradiente = cv.morphologyEx(linux_binaria, cv.MORPH_GRADIENT, kernel)
-
-# El notebook morph3.ipynb describe el Borde Externo: Dilatación - Original
-# img_borde_externo = cv.dilate(linux_binaria, kernel) - linux_binaria
-  </code></pre>
-
-  <h4>4.4.2. Top Hat y Black Hat (Transformaciones de Realce)</h4>
-  <p>
-    <strong>Funcionamiento:</strong> Se utilizan para corregir fondos no uniformes o extraer elementos de la 
-    imagen que son más pequeños que el kernel.
-  </p>
-  <ul>
-    <li><strong>Top Hat:</strong> Extrae elementos brillantes pequeños (<em>Original - Apertura</em>).</li>
-    <li><strong>Black Hat:</strong> Extrae elementos oscuros pequeños (<em>Cierre - Original</em>).</li>
-  </ul>
-
-  <pre><code># Top Hat: Realce de elementos brillantes
-img_top_hat = cv.morphologyEx(linux_binaria, cv.MORPH_TOPHAT, kernel)
-
-# Black Hat: Realce de elementos oscuros
-img_black_hat = cv.morphologyEx(linux_binaria, cv.MORPH_BLACKHAT, kernel)
-  </code></pre>
+<section id="tema3">
+  <h2>3. Tema 3 (Carol)</h2>
+  <p></p>
 </section>
 
-  </p>
-  <p style="text-align:center;">
-    <code
+<section id="abstract">
+  <h2>4. Abstract (English)</h2>
+  <p></p>
+</section>
 
- 
-  </p>
-    </section>
+<section id="conclusiones">
+  <h2>5. Conclusiones</h2>
+  <p></p>
+</section>
 
-    <section id="abstract">
-      <h2>4. Abstract (English)(Miguel)</h2>
-      <p>[Abstract en inglés para el segundo parcial]</p>
-    </section>
+</main>
 
-    <section id="conclusiones">
-      <h2>5. Conclusiones Individuales</h2>
-      <p><strong>Integrante 1 (Hannah):</strong>Para los temas vistos de este segundo parcial, me ha permitido comprender de mejor forma los cambios y transformaciónes que 
-      se pueden llevar a cabo en una imagen y su comportamineto como fue, la visualizacion de los histogramas de una imagen a color. Fue muy interezante y enrriquesedor los aprendizajes
-    ,los temas y el desarrollo de expociones que llevamos a caboo que nos hizo comprender mas a fondo y de forma más particular un tema. Para nuestro equipo nos toco el YCbCr donde vimos la separacion de
-      la luminacia y los espacios de color. Es de hecho muy interesante como se aplican los fdiferentes espacios de color en la vida diari. En el caso de el YCbCr , a mi me parcedi muy interesante ela transmicion de la image a las pantallas televisoras,
-      la deteccion de rostros. Entre muchas cosas el desarrollo de los temas de este parcial me ha paricido mas claro y significativo y es muy interesante comprender esos cambios que ocurren cuando uno cambia el filtro cuando se toma una foto. Lo vemos muy normal pero es todo un desarrollo. </p>
-      <p><strong>Integrante 2 (Miguel):</strong> 
-        A lo largo de la semana de estudio sobre Procesamiento Digital de Imágenes, el equipo fortaleció su comprensión sobre cómo los sistemas informáticos pueden analizar y transformar imágenes para obtener información útil. Los integrantes coincidieron en que uno de los mayores retos fue dominar el uso de filtros de convolución y transformaciones geométricas, ya que implican tanto fundamentos matemáticos como su aplicación práctica en entornos de programación. Asimismo, el tema de segmentación resultó especialmente relevante, pues permitió comprender cómo aislar regiones específicas de una imagen y reconocer patrones mediante técnicas de umbralización y detección de bordes. En conjunto, el equipo reconoce que este aprendizaje no solo aportó bases teóricas sólidas, sino también herramientas aplicables a campos como la visión por computadora, la inteligencia artificial y la seguridad informática, áreas en las que planean aplicar los conocimientos adquiridos.
-      </p>
-      <p><strong>Integrante 3 (Carol):</strong> Durante este periodo de clases, los temas vistos sobre procesamiento de 
-        imágenes me ayudaron a comprender muchas cosas, estre ellas cómo las operaciones matemáticas y 
-        lógicas permiten modificar, analizar y mejorar imágenes, algo que opino que es un poco complicado debido a todos 
-        los conocimientos que involucra. Aprendí tambien que el filtrado es de gran importancia para cosas como eliminar 
-        o resaltar detalles,  identificar los límites de los objetos, asi tambien las transformaciones que ajustan la 
-        forma y estructura de las regiones en una imagen, es importante saber como podemos recuperar imagenes o ver 
-        detalles que a simple vista no puede verse, lo mejor es que todo esto son procesos, formulas que solo necesitan aplicarse.
-        Con estos conceptos podemos ver cómo a partir de principios sencillos como el uso de un kernel se pueden 
-        lograr resultados complejos que son la base de muchos sistemas de imágenes actuales.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Equipo Panteras Verdes - Reporte Segundo Parcial</p>
-  </footer>
 </body>
 </html>
+
