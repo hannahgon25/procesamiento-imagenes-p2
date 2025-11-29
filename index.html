@@ -167,11 +167,48 @@
 
 
 
-
 <section id="tema2">
-  <h2>2. Tema 2 (Miguel)</h2>
-  <p></p>
+  <h2>2. Tema 2 (Miguel): Operaciones Morfológicas</h2>
+  <p>
+    En la Semana XV se trabajaron principalmente operaciones morfológicas en imágenes digitales y un cuaderno de prácticas sobre <strong>ccws</strong> (probablemente vinculado a segmentación o filtrado). 
+    Los temas giran en torno al análisis de estructuras dentro de imágenes y las transformaciones que permiten resaltar, limpiar o modificar formas.
+  </p>
+
+  <h3>1. Operaciones Morfológicas</h3>
+  <ul>
+    <li><strong>Definición:</strong> Técnicas basadas en la forma de los objetos dentro de una imagen binaria o en escala de grises.</li>
+    <li><strong>Elementos estructurantes:</strong> Figuras (cuadrados, discos, líneas) que sirven como “plantillas” para modificar la imagen.</li>
+    <li><strong>Operaciones básicas:</strong>
+      <ul>
+        <li><strong>Erosión:</strong> Reduce el tamaño de los objetos, elimina ruido pequeño.</li>
+        <li><strong>Dilatación:</strong> Expande los objetos, rellena huecos.</li>
+        <li><strong>Apertura:</strong> Erosión seguida de dilatación; útil para eliminar ruido manteniendo la forma principal.</li>
+        <li><strong>Cierre:</strong> Dilatación seguida de erosión; rellena huecos pequeños en los objetos.</li>
+      </ul>
+    </li>
+    <li><strong>Aplicaciones:</strong> Limpieza de imágenes binarias, extracción de bordes, segmentación de regiones y reconocimiento de patrones estructurales.</li>
+  </ul>
+
+  <h3>2. Transformaciones Avanzadas (Morph2.ipynb)</h3>
+  <ul>
+    <li><strong>Operaciones de borde:</strong> Obtención de contornos mediante diferencias entre dilatación y erosión.</li>
+    <li><strong>Esqueletización:</strong> Reducción de objetos a su forma más simple (línea central).</li>
+    <li><strong>Reconstrucción morfológica:</strong> Recuperación de estructuras originales a partir de versiones erosionadas o dilatadas.</li>
+    <li><strong>Aplicaciones prácticas:</strong> Detección de formas geométricas, procesamiento de texto en imágenes y análisis de huellas, células o estructuras repetitivas.</li>
+  </ul>
+
+  <h3>3. Cuaderno CCWS (ccws.ipynb)</h3>
+  <p>
+    Aunque el nombre no es explícito, por el contexto de PDI suele relacionarse con:
+  </p>
+  <ul>
+    <li><strong>Segmentación de imágenes:</strong> Separar regiones de interés.</li>
+    <li><strong>Filtrado espacial:</strong> Aplicación de máscaras para suavizar o resaltar detalles.</li>
+    <li><strong>Clasificación supervisada/no supervisada:</strong> Identificación de regiones según características de color o textura.</li>
+    <li><strong>Ejemplo típico:</strong> Detección de áreas homogéneas en imágenes médicas o satelitales.</li>
+  </ul>
 </section>
+
 
 <section id="tema3">
   <h2>3. Tema 3 (Hannah)</h2>
