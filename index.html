@@ -18,13 +18,13 @@
         <li>Reza Zatarain Jesús Miguel - ID:0276971</li>
         <li>Gutiérrez Castellanos Carol Kristel - ID:0276969</li>
       </ul>
-    </details>
+</details>
   </header>
   
   <nav>
     <ul>
-        <li><a href="#intro"> Introducción </a></li>
-      <li><a href="#tema1">1. Tema 1</a>Binarización, polaridad, umbralización</li>
+      <li><a href="#intro"> Introducción </a></li>
+      <li><a href="#tema1">1. Tema 1</a>Binarización, polaridad, umbralización (Carol & Hannah)</li>
       <li><a href="#tema2">2. Tema 2</a></li>
       <li><a href="#tema3">3. Tema 3</a></li>
       <li><a href="#abstract">4. Abstract (English)</a></li>
@@ -33,297 +33,262 @@
   </nav>
 
   <main>
- <!-- INTRODUCCIÓN -->
+    <!-- INTRODUCCIÓN -->
     <section id="intro">
       <h2>1. Introducción</h2>
+      <p>
+        En estas últimas semanas repasamos técnicas de procesamiento digital de imágenes: binarización,
+        umbralización, morfología matemática, extracción de bordes, análisis de componentes conectados y
+        captura de video con OpenCV. El siguiente documento organiza los aportes del equipo y los ejemplos
+        de código utilizados en prácticas.
+      </p>
+    </section>
 
- <p>
-    En estas últimas semanas realizamos un repaso de conceptos importantes sobre morfología matemática y 
-    umbralización. Con estos temas de tercer parcial finalizamos este curso, añadiendo algunas técnicas ya 
-    avanzadas a las que hemos aprendido y que han sido de gran aprendizaje durante el curso.
-  </p>
+   
+    <section id="tema1">
+      <h2>1. Tema 1 (Carol & Hannah): Binarización, Polaridad y Umbralización</h2>
+
   
+      <article>
+        <h3>Carol — Conceptos y flujo práctico</h3>
+        <p>
+          En el procesamiento de imágenes primero preparamos la imagen (suavizado, conversión a gris) y
+          luego aplicamos una estrategia de umbralización adecuada. Después de binarizar, aplicamos operaciones
+          morfológicas para limpiar la máscara antes de extraer información (contornos, componentes).
+        </p>
+
+        <h4>Pasos típicos</h4>
+        <ol>
+          <li>Lectura y conversión a escala de grises.</li>
+          <li>Filtrado (blur, median) para reducir ruido.</li>
+          <li>Umbralización (global, Otsu, adaptativa).</li>
+          <li>Operaciones morfológicas para limpiar la máscara (erosión, dilatación, apertura, cierre).</li>
+          <li>Detección/extracción (contornos, connected components).</li>
+        </ol>
+
+        <h4>Ejemplo: umbral básico</h4>
+        <pre class="code">
+_, bin = cv.threshold(gray, 128, 255, cv.THRESH_BINARY)
+        </pre>
+
+        <h4>Ejemplo: Otsu (umbral automático)</h4>
+        <pre class="code">
+_, bin = cv.threshold(gray, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+        </pre>
+      </article>
+
   
-<section id="tema1">
-  <h2>1. Tema 1 (Hannah, Carol): Binarización, polaridad, umbralización</h2>
+      <article>
+        <h3>Hannah — Morfología Matemática (ampliada)</h3>
 
-  <h3>1. --- Binarización y Control de Polaridad --- </h3>
-  <p>
-    Debemos empezar con preparar la imagen, asegurando que el objeto que nos interese esté 
-    correctamente segmentado para las operaciones morfológicas.
-  </p>
+        <p>
+          La morfología matemática aplica operaciones definidas por conjuntos (elementos estructurantes)
+          sobre la imagen, interpretada como conjunto de píxeles. Se usa para analizar forma y estructura
+          (ej.: eliminación de ruido, unión de regiones, extracción de bordes).
+        </p>
 
-  <h4>A. Binarización </h4>
-  <p>
-    Consiste en la conversión de la imagen de escala de grises a un formato binario, valores 0 y 255.<br>
-    <strong>Se realiza de la siguiente manera: </strong> Uso de <code>cv.threshold()</code> de OpenCV o de NumPy <code>np.where()</code>.
-  </p>
+        <h4>Sets (conjuntos)</h4>
+        <p>
+          En morfología, una imagen binaria es un conjunto de píxeles «1» (objeto) y «0» (fondo).
+          Las operaciones se definen con un <strong>Elemento Estructurante (SE)</strong>, análogo a un kernel.
+        </p>
 
-  <h4>B. Inversión de Polaridad</h4>
-  <p>
-    Es la técnica para asegurar que el objeto esté representado en blanco (255) y el fondo en negro (0), o 
-    viceversa.<br>
-    <strong>Se realiza de la siguiente manera: </strong> Uso del operador <code>~</code> (Bitwise NOT) de NumPy para invertir 
-    todos los valores de píxel rápidamente. <br>
-    <strong>Inversión: </strong> Utilización de la bandera <code>cv.THRESH_BINARY_INV</code> durante la 
-    binarización para lograr la inversión directamente.
-  </p>
+        <h4>Elementos importantes del SE</h4>
+        <ul>
+          <li><strong>Píxeles de primer plano (1)</strong></li>
+          <li><strong>Píxeles de fondo (0)</strong></li>
+          <li><strong>Don't-care (x)</strong> — posiciones cuyo valor no importa</li>
+        </ul>
 
-  <h3>2. Morfología Matemática: Operaciones Fundamentales</h3>
-  <p>
-    En la Morfología Matemática se usa un  <strong>Elemento Estructurante (Kernel)</strong> para modificar la forma de los objetos.
-  </p>
+        <h4>Operaciones básicas</h4>
+        <p><strong>Erosión:</strong> reduce las regiones blancas (quita bordes / ruido)</p>
+        <pre class="code">
+erosion = cv.erode(bin, kernel)
+        </pre>
 
-  <h4>A. Dilatación </h4>
-  <p>
-    Operación que expande o agranda las áreas blancas del objeto.<br>
-    <strong>Se realiza de la siguiente manera: </strong> <code>cv.dilate(imagen, kernel)</code>.<br>
-    <strong>Aplicación:</strong> Fusión de componentes conexos y relleno de huecos.
-  </p>
+        <p><strong>Dilatación:</strong> expande las regiones blancas (une objetos cercanos)</p>
+        <pre class="code">
+dilate = cv.dilate(bin, kernel)
+        </pre>
 
-  <h4>B. Erosión </h4>
-  <p>
-    Operación que reduce las áreas blancas del objeto.<br>
-    <strong>Se realiza de la siguiente manera: </strong> <code>cv.erode(imagen, kernel)</code>.<br>
-    <strong>Aplicación:</strong> Eliminación de ruido y separación de objetos ligeramente unidos.
-  </p>
+        <p><strong>Apertura:</strong> erosión seguida de dilatación — elimina ruido pequeño.</p>
+        <pre class="code">
+opened = cv.morphologyEx(bin, cv.MORPH_OPEN, kernel)
+        </pre>
 
-  <h4>C. Aplicación Iterativa</h4>
-  <p>
-    Las operaciones pueden intensificarse utilizando <code>iterations = N</code>, aplicando dilatación 
-    o erosión múltiples veces para lograr efectos más marcados.
-  </p>
+        <p><strong>Cierre:</strong> dilatación seguida de erosión — rellena huecos pequeños.</p>
+        <pre class="code">
+closed = cv.morphologyEx(bin, cv.MORPH_CLOSE, kernel)
+        </pre>
 
-  <h3>3. Aplicaciones Compuestas: Gradiente Morfológico</h3>
+        <h4>Aplicaciones compuestas</h4>
+        <p><strong>Gradiente morfológico</strong> (dilatación - original) para contornos:</p>
+        <pre class="code">
+grad = cv.dilate(gray, kernel) - gray
+        </pre>
 
-  <h4>A. Gradiente Morfológico Externo (Detección de Contornos)</h4>
-  <p>
-    Técnica utilizada para extraer únicamente el contorno exterior de los objetos.<br>
-    <strong>Fórmula:</strong><br>
-    <code>Borde Externo = Dilatación(Imagen) – Imagen Original</code><br>
-    <strong>Efecto:</strong> Se obtiene una línea delgada representando el contorno externo.
-  </p>
+        <h4>Esqueletos y thinning</h4>
+        <p>Para obtener la “línea central” de un objeto se usan técnicas de thinning / skeletonization:</p>
+        <pre class="code">
+skel = cv.ximgproc.thinning(bin)
+        </pre>
 
-  <h4>B. Resta de Imágenes</h4>
-  <p>
-    Implementada con el operador <code>-</code> de NumPy, píxel por píxel.
-  </p>
+        <h4>Resumen práctico</h4>
+        <p>
+          Use morfología justo después de la binarización para corregir defectos: <em>umbral → morfología → detección</em>.
+        </p>
+      </article>
 
-  <h3>4. Manipulación de Arrays con NumPy</h3>
+     
 
-  <h4>A. Operaciones Lógicas</h4>
-  <p>
-    <code>np.where()</code> es usado tanto para binarización como para aplicar cualquier regla o 
-    asignación condicional a los píxeles.
-  </p>
+    </section>
 
-  <h4>B. Verificación de Arrays</h4>
-  <p>
-    Funciones como <code>np.unique()</code> y <code>.all()</code> permiten verificar la 
-    consistencia entre imágenes, como comprobar si dos resultados son idénticos a nivel de píxel.
-  </p>
+    <section id="tema2">
+      <h2>2. Tema 2 (Miguel): Operaciones Morfológicas</h2>
+      <p>
+        En la Semana XV se trabajaron principalmente operaciones morfológicas en imágenes digitales y un cuaderno de prácticas sobre <strong>ccws</strong> (probablemente vinculado a segmentación o filtrado). 
+        Los temas giran en torno al análisis de estructuras dentro de imágenes y las transformaciones que permiten resaltar, limpiar o modificar formas.
+      </p>
 
-  <h3>2. --- Umbralización --- </h3>
-  <p>
-    La Umbralización es la base de la segmentación, y para ello utilizamos distintos métodos que varían según las condiciones de iluminación de la imagen.
-  </p>
-
-  <h3>1. Umbralización Global Fija</h3>
-  <p>
-    Es el método más básico, donde se selecciona un único valor de umbral (<strong>T</strong>) que se aplica a todos los píxeles de la imagen por igual. 
-    Su implementación se realiza utilizando la función <code>cv.threshold()</code> de OpenCV o la lógica condicional <code>np.where()</code> de NumPy.
-  </p>
-
-  <h3>2. Umbralización Automática</h3>
-
-  <h4>Método Otsu (<code>cv.THRESH_OTSU</code>)</h4>
-  <p>
-    Analiza el histograma de la imagen y calcula el umbral óptimo que minimiza la varianza dentro de cada clase, buscando una separación clara entre los dos picos principales del histograma.
-  </p>
-
-  <h4>Método Triangle (<code>cv.THRESH_TRIANGLE</code>)</h4>
-  <p>
-    Traza una línea recta sobre el histograma y selecciona el punto con la mayor distancia a esa línea. Este método es especialmente útil cuando el histograma está dominado por un solo pico grande.
-  </p>
-
-  <h3>3. Umbralización Adaptativa</h3>
-  <p>
-    Es la técnica ideal para imágenes con iluminación irregular. El umbral (<strong>T</strong>) no es único; en su lugar, se calcula un valor distinto para cada píxel basado en su vecindario local.
-    Para implementarlo se utiliza <code>cv.adaptiveThreshold()</code>.
-  </p>
-
-  <p><strong>Parámetros Esenciales:</strong></p>
-  <ul>
-    <li><strong>Método Adaptativo:</strong> Define cómo se calcula el umbral local (ej. <code>cv.ADAPTIVE_THRESH_MEAN_C</code> basado en el promedio).</li>
-    <li><strong>Tamaño de Bloque:</strong> Área local (ej. 21×21 píxeles) que se utiliza para calcular el valor del umbral.</li>
-    <li><strong>Constante C:</strong> Valor restado al umbral local para ajustar su sensibilidad.</li>
-  </ul>
-
-  <p>
-    El propósito principal de este método es lograr una segmentación limpia incluso en imágenes con sombras o variaciones fuertes de iluminación,
-    obteniendo así una base adecuada para aplicar técnicas de Morfología Matemática.
-  </p>
-</section>
-
-
-
-<section id="tema2">
-  <h2>2. Tema 2 (Miguel): Operaciones Morfológicas</h2>
-  <p>
-    En la Semana XV se trabajaron principalmente operaciones morfológicas en imágenes digitales y un cuaderno de prácticas sobre <strong>ccws</strong> (probablemente vinculado a segmentación o filtrado). 
-    Los temas giran en torno al análisis de estructuras dentro de imágenes y las transformaciones que permiten resaltar, limpiar o modificar formas.
-  </p>
-
-  <h3>1. Operaciones Morfológicas</h3>
-  <ul>
-    <li><strong>Definición:</strong> Técnicas basadas en la forma de los objetos dentro de una imagen binaria o en escala de grises.</li>
-    <li><strong>Elementos estructurantes:</strong> Figuras (cuadrados, discos, líneas) que sirven como “plantillas” para modificar la imagen.</li>
-    <li><strong>Operaciones básicas:</strong>
+      <h3>1. Operaciones Morfológicas</h3>
       <ul>
-        <li><strong>Erosión:</strong> Reduce el tamaño de los objetos, elimina ruido pequeño.</li>
-        <li><strong>Dilatación:</strong> Expande los objetos, rellena huecos.</li>
-        <li><strong>Apertura:</strong> Erosión seguida de dilatación; útil para eliminar ruido manteniendo la forma principal.</li>
-        <li><strong>Cierre:</strong> Dilatación seguida de erosión; rellena huecos pequeños en los objetos.</li>
+        <li><strong>Definición:</strong> Técnicas basadas en la forma de los objetos dentro de una imagen binaria o en escala de grises.</li>
+        <li><strong>Elementos estructurantes:</strong> Figuras (cuadrados, discos, líneas) que sirven como “plantillas” para modificar la imagen.</li>
+        <li><strong>Operaciones básicas:</strong>
+          <ul>
+            <li><strong>Erosión:</strong> Reduce el tamaño de los objetos, elimina ruido pequeño.</li>
+            <li><strong>Dilatación:</strong> Expande los objetos, rellena huecos.</li>
+            <li><strong>Apertura:</strong> Erosión seguida de dilatación; útil para eliminar ruido manteniendo la forma principal.</li>
+            <li><strong>Cierre:</strong> Dilatación seguida de erosión; rellena huecos pequeños en los objetos.</li>
+          </ul>
+        </li>
+        <li><strong>Aplicaciones:</strong> Limpieza de imágenes binarias, extracción de bordes, segmentación de regiones y reconocimiento de patrones estructurales.</li>
       </ul>
-    </li>
-    <li><strong>Aplicaciones:</strong> Limpieza de imágenes binarias, extracción de bordes, segmentación de regiones y reconocimiento de patrones estructurales.</li>
-  </ul>
 
-  <h3>2. Transformaciones Avanzadas (Morph2.ipynb)</h3>
-  <ul>
-    <li><strong>Operaciones de borde:</strong> Obtención de contornos mediante diferencias entre dilatación y erosión.</li>
-    <li><strong>Esqueletización:</strong> Reducción de objetos a su forma más simple (línea central).</li>
-    <li><strong>Reconstrucción morfológica:</strong> Recuperación de estructuras originales a partir de versiones erosionadas o dilatadas.</li>
-    <li><strong>Aplicaciones prácticas:</strong> Detección de formas geométricas, procesamiento de texto en imágenes y análisis de huellas, células o estructuras repetitivas.</li>
-  </ul>
+      <h3>2. Transformaciones Avanzadas (Morph2.ipynb)</h3>
+      <ul>
+        <li><strong>Operaciones de borde:</strong> Obtención de contornos mediante diferencias entre dilatación y erosión.</li>
+        <li><strong>Esqueletización:</strong> Reducción de objetos a su forma más simple (línea central).</li>
+        <li><strong>Reconstrucción morfológica:</strong> Recuperación de estructuras originales a partir de versiones erosionadas o dilatadas.</li>
+        <li><strong>Aplicaciones prácticas:</strong> Detección de formas geométricas, procesamiento de texto en imágenes y análisis de huellas, células o estructuras repetitivas.</li>
+      </ul>
 
-  <h3>3. Cuaderno CCWS (ccws.ipynb)</h3>
-  <p>
-    Aunque el nombre no es explícito, por el contexto de PDI suele relacionarse con:
-  </p>
-  <ul>
-    <li><strong>Segmentación de imágenes:</strong> Separar regiones de interés.</li>
-    <li><strong>Filtrado espacial:</strong> Aplicación de máscaras para suavizar o resaltar detalles.</li>
-    <li><strong>Clasificación supervisada/no supervisada:</strong> Identificación de regiones según características de color o textura.</li>
-    <li><strong>Ejemplo típico:</strong> Detección de áreas homogéneas en imágenes médicas o satelitales.</li>
-  </ul>
-</section>
+      <h3>3. Cuaderno CCWS (ccws.ipynb)</h3>
+      <p>
+        Aunque el nombre no es explícito, por el contexto de PDI suele relacionarse con:
+      </p>
+      <ul>
+        <li><strong>Segmentación de imágenes:</strong> Separar regiones de interés.</li>
+        <li><strong>Filtrado espacial:</strong> Aplicación de máscaras para suavizar o resaltar detalles.</li>
+        <li><strong>Clasificación supervisada/no supervisada:</strong> Identificación de regiones según características de color o textura.</li>
+        <li><strong>Ejemplo típico:</strong> Detección de áreas homogéneas en imágenes médicas o satelitales.</li>
+      </ul>
+    </section>
 
+    <section id="tema3">
+      <h2>3. Tema 3 (Hannah): Análisis de Componentes Conectados y Captura de Video con OpenCV</h2>
 
-<section id="tema3">
-  <h2 style="font-size: 2rem;">3. Tema 3 (Hannah): Morfología Matemática y Captura de Video</h2>
+      <p>
+        Esta sección muestra cómo pasar de una máscara binaria a la extracción y análisis de regiones (componentes conectados),
+        y cómo aplicar todo esto en tiempo real usando captura de video. Está dividida para facilitar lectura y aplicación práctica.
+      </p>
 
-  <h3 style="font-size: 1.7rem;"> Morfología Matemática</h3>
-  <p>
-    La morfología es una rama de la biología que estudia la forma y estructura de los organismos.  
-    En procesamiento de imágenes, utilizamos la <strong>morfología matemática</strong> como un conjunto 
-    de herramientas para analizar, modificar y extraer la estructura geométrica de los objetos dentro de una imagen.
-  </p>
+     
+      <article>
+        <h3>3.1 Componentes Conectados — teoría y uso</h3>
+        <p>
+          Los <strong>componentes conectados</strong> etiquetan regiones continuas de píxeles con el mismo valor (p. ej. blanco).
+          OpenCV ofrece funciones para etiquetar y calcular estadísticas de cada componente.
+        </p>
 
-  <h3>🔹 Sets (Conjuntos)</h3>
-  <p>
-    En morfología matemática, las imágenes binarias se interpretan como <strong>conjuntos de píxeles</strong>.
-  </p>
+        <h4>Funciones</h4>
+        <pre class="code">
+# Etiquetado simple
+n_labels, labels = cv.connectedComponents(bin)
 
-  <h4>Tipos de conjuntos:</h4>
-  <ul>
-    <li><strong>Objetos:</strong> Conjunto de píxeles de primer plano (blancos).</li>
-    <li><strong>Elementos estructurantes (SE):</strong> Plantillas que definen cómo se examina o transforma la imagen.</li>
-  </ul>
+# Etiquetado con estadísticas
+n, lab, stats, centroids = cv.connectedComponentsWithStats(bin)
+        </pre>
 
-  <p>
-    Un SE puede contener:
-    <ul>
-      <li>Píxeles de primer plano (1)</li>
-      <li>Píxeles de fondo (0)</li>
-      <li>Elementos “don't care” (x) → su valor no afecta la operación</li>
-    </ul>
-    El SE funciona de forma similar a un kernel de convolución.
-  </p>
+        <h4>Descripción de <code>stats</code></h4>
+        <ul>
+          <li><strong>area</strong> — número de píxeles</li>
+          <li><strong>left, top, width, height</strong> — bounding box</li>
+          <li><strong>centroid</strong> — coordenadas del centro</li>
+        </ul>
 
-  <h3 style="margin-top: 30px;"> ¿Qué es la morfología matemática?</h3>
-  <p>
-    Es un conjunto de operaciones que permiten modificar, limpiar o analizar formas dentro de imágenes 
-    binarias mediante operaciones sobre conjuntos.
-  </p>
-
-  <h3 style="font-size: 1.5rem;">🔹 Erosión</h3>
-  <p>Reduce el tamaño de los objetos al eliminar bordes. Útil para quitar ruido.</p>
-  <pre class="code">
-erosion = cv.erode(img, kernel)
-  </pre>
-
-  <h3 style="font-size: 1.5rem;">🔹 Dilatación</h3>
-  <p>Aumenta el tamaño de los objetos y une componentes cercanos.</p>
-  <pre class="code">
-dilate = cv.dilate(img, kernel)
-  </pre>
-
-  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Umbralización (Binarización)</h3>
-
-  <p>Convierte la imagen a blanco y negro según un valor límite.</p>
-  <pre class="code">
-_, bin = cv.threshold(img, 128, 255, cv.THRESH_BINARY)
-  </pre>
-
-  <h4>⭐ Umbralización automática – Otsu</h4>
-  <pre class="code">
-_, bin = cv.threshold(img, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
-  </pre>
-
-  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Extracción de Bordes</h3>
-  <pre class="code">
-edges = cv.Canny(img, 50, 150)
-  </pre>
-
-  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Adelgazamiento (Thinning)</h3>
-  <pre class="code">
-thin = cv.ximgproc.thinning(img)
-  </pre>
-
-  <h3 style="font-size: 1.7rem;"> Engrosamiento (Thickening)</h3>
-  <pre class="code">
-thick = cv.dilate(img, kernel)
-  </pre>
-
-  <h3 style="font-size: 1.7rem;">  Esqueletos</h3>
-  <pre class="code">
-skel = cv.ximgproc.thinning(img)
-  </pre>
-
-  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Componentes Conectados</h3>
-  <p>Identifica regiones blancas separadas.</p>
-
-  <pre class="code">
-n, labels = cv.connectedComponents(bin)
-  </pre>
-
-  <h4> Componentes conectados con estadísticas</h4>
-  <pre class="code">
-n, lab, stats, cent = cv.connectedComponentsWithStats(bin)
-  </pre>
-
-  <p><strong>Ejemplo típico: filtrado por tamaño</strong></p>
-  <pre class="code">
-for x, y, w, h, area in stats:
+        <h4>Filtrado por tamaño (ejemplo)</h4>
+        <pre class="code">
+for i in range(1, n):  # evitar el label 0 (fondo)
+    x = stats[i, cv.CC_STAT_LEFT]
+    y = stats[i, cv.CC_STAT_TOP]
+    w = stats[i, cv.CC_STAT_WIDTH]
+    h = stats[i, cv.CC_STAT_HEIGHT]
+    area = stats[i, cv.CC_STAT_AREA]
     if area > 500:
-        cv.rectangle(img, (x, y), (x+w, y+h), (0,255,0), 2)
-  </pre>
+        cv.rectangle(img, (x,y), (x+w, y+h), (0,255,0), 2)
+        cv.putText(img, str(i), (x, y-5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1)
+        </pre>
 
-  <h3 style="font-size: 1.7rem; margin-top: 50px;"> Resumen Final</h3>
-  <p>
-    <strong>1.</strong> Umbralizamos → imagen binaria  
-    <br><strong>2.</strong> Aplicamos morfología → limpieza  
-    <br><strong>3.</strong> Componentes conectados → detección de objetos  
-  </p>
+        <p>
+          Con esto se detectan y anotan regiones significativas —útil para conteo, filtrado y rastreo básico.
+        </p>
+      </article>
 
-  <h2 style="font-size: 2rem; margin-top: 60px;">📹 Captura de Video con OpenCV</h2>
-  <p>
-    Se usa el módulo <code>cv2.VideoCapture()</code> para acceder a cámaras web o archivos de video.
-    Permite manipular cada frame en tiempo real, aplicando filtros o análisis morfológico.
-  </p>
+      <!-- Captura de video: secciones explicativas -->
+      <article>
+        <h3>3.2 Captura de Video con OpenCV — secciones</h3>
 
-  <pre class="code">
+        <h4>A. Crear el objeto VideoCapture</h4>
+        <p>
+          El objeto <code>cv.VideoCapture()</code> abre la cámara (índice 0 por defecto) o un archivo de video.
+        </p>
+        <pre class="code">
+cap = cv.VideoCapture(0)  # 0: cámara por defecto, o "video.mp4" para archivo
+if not cap.isOpened():
+    raise Exception("ERROR! No se pudo abrir la cámara")
+        </pre>
+
+        <h4>B. Lectura de frames y verificación</h4>
+        <p>
+          <code>cap.read()</code> devuelve <code>ret</code> (bool) y <code>frame</code> (imagen). Siempre verificar <code>ret</code>.
+        </p>
+        <pre class="code">
+ret, frame = cap.read()
+if not ret:
+    break  # fin del video o error
+        </pre>
+
+        <h4>C. Visualización en tiempo real</h4>
+        <p>
+          <code>cv.imshow()</code> muestra la ventana con el frame actual. Útil combinar con procesamiento previo.
+        </p>
+        <pre class="code">
+cv.imshow("Frame", frame)
+        </pre>
+
+        <h4>D. Control del bucle: <code>waitKey</code></h4>
+        <p>
+          <code>cv.waitKey()</code> permite leer teclas y controlar la velocidad del bucle. Ejemplos de teclas:
+        </p>
+        <pre class="code">
+key = cv.waitKey(17) & 0xFF
+if key == ord('q'):   # salir
+    break
+elif key == ord('g'): # alternar gris
+    is_gray = not is_gray
+elif key == ord('b'): # alternar blur
+    is_blurred = not is_blurred
+        </pre>
+
+        <h4>E. Liberar recursos</h4>
+        <pre class="code">
+cap.release()
+cv.destroyAllWindows()
+        </pre>
+
+        <h4>F. Ejemplo completo comentado (integrado con procesamiento)</h4>
+        <pre class="code">
 import cv2 as cv
 
 cap = cv.VideoCapture(0)
@@ -334,35 +299,64 @@ is_gray = False
 is_blurred = False
 
 while True:
-    _, frame = cap.read()
+    ret, frame = cap.read()
+    if not ret:
+        break
 
+    # 1) Pre-procesamiento opcional
+    proc = frame.copy()
     if is_gray:
-        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        proc = cv.cvtColor(proc, cv.COLOR_BGR2GRAY)
     if is_blurred:
-        frame = cv.blur(frame, (11, 11))
+        proc = cv.blur(proc, (11, 11))
 
-    key = cv.waitKey(17)
-    if key == ord("q"):
-        exit()
-    elif key == ord("g"):
+    # 2) Ejemplo: umbralizar y aplicar morfología
+    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) if len(frame.shape) == 3 else frame
+    _, bin_mask = cv.threshold(gray, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5,5))
+    clean = cv.morphologyEx(bin_mask, cv.MORPH_OPEN, kernel)
+
+    # 3) Analizar componentes conectados sobre 'clean'
+    n, labels, stats, centroids = cv.connectedComponentsWithStats(clean)
+    for i in range(1, n):
+        area = stats[i, cv.CC_STAT_AREA]
+        if area > 500:
+            x = stats[i, cv.CC_STAT_LEFT]
+            y = stats[i, cv.CC_STAT_TOP]
+            w = stats[i, cv.CC_STAT_WIDTH]
+            h = stats[i, cv.CC_STAT_HEIGHT]
+            cv.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
+
+    # 4) Mostrar resultado
+    cv.imshow("Original", frame)
+    cv.imshow("Mask limpia", clean)
+
+    key = cv.waitKey(17) & 0xFF
+    if key == ord('q'):
+        break
+    elif key == ord('g'):
         is_gray = not is_gray
-    elif key == ord("b"):
+    elif key == ord('b'):
         is_blurred = not is_blurred
-
-    cv.imshow("frame", frame)
 
 cap.release()
 cv.destroyAllWindows()
-  </pre>
+        </pre>
 
-</section>
+        <p>
+          Este ejemplo ilustra el flujo completo: lectura → preprocesamiento → umbralización → morfología → 
+          componentes conectados → visualización. Puedes ajustar parámetros (tamaño de kernel, umbrales, área mínima)
+          según el caso de uso.
+        </p>
+      </article>
+    </section>
 
+    <!-- ABSTRACT -->
+    <section id="abstract">
+      <h2>4. Abstract (English)</h2>
+      <p>[ ]</p>
+    </section>
 
-
-<section id="abstract">
-  <h2>4. Abstract (English)</h2>
-  <p>[]</p>
-</section>
 
 <section id="conclusiones">
   <h2>5. Conclusiones Individuales (Tercer Parcial)</h2>
