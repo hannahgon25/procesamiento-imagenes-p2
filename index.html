@@ -211,9 +211,152 @@
 
 
 <section id="tema3">
-  <h2>3. Tema 3 (Hannah)</h2>
-  <p></p>
+  <h2 style="font-size: 2rem;">3. Tema 3 (Hannah): Morfología Matemática y Captura de Video</h2>
+
+  <h3 style="font-size: 1.7rem;"> Morfología Matemática</h3>
+  <p>
+    La morfología es una rama de la biología que estudia la forma y estructura de los organismos.  
+    En procesamiento de imágenes, utilizamos la <strong>morfología matemática</strong> como un conjunto 
+    de herramientas para analizar, modificar y extraer la estructura geométrica de los objetos dentro de una imagen.
+  </p>
+
+  <h3>🔹 Sets (Conjuntos)</h3>
+  <p>
+    En morfología matemática, las imágenes binarias se interpretan como <strong>conjuntos de píxeles</strong>.
+  </p>
+
+  <h4>Tipos de conjuntos:</h4>
+  <ul>
+    <li><strong>Objetos:</strong> Conjunto de píxeles de primer plano (blancos).</li>
+    <li><strong>Elementos estructurantes (SE):</strong> Plantillas que definen cómo se examina o transforma la imagen.</li>
+  </ul>
+
+  <p>
+    Un SE puede contener:
+    <ul>
+      <li>Píxeles de primer plano (1)</li>
+      <li>Píxeles de fondo (0)</li>
+      <li>Elementos “don't care” (x) → su valor no afecta la operación</li>
+    </ul>
+    El SE funciona de forma similar a un kernel de convolución.
+  </p>
+
+  <h3 style="margin-top: 30px;"> ¿Qué es la morfología matemática?</h3>
+  <p>
+    Es un conjunto de operaciones que permiten modificar, limpiar o analizar formas dentro de imágenes 
+    binarias mediante operaciones sobre conjuntos.
+  </p>
+
+  <h3 style="font-size: 1.5rem;">🔹 Erosión</h3>
+  <p>Reduce el tamaño de los objetos al eliminar bordes. Útil para quitar ruido.</p>
+  <pre class="code">
+erosion = cv.erode(img, kernel)
+  </pre>
+
+  <h3 style="font-size: 1.5rem;">🔹 Dilatación</h3>
+  <p>Aumenta el tamaño de los objetos y une componentes cercanos.</p>
+  <pre class="code">
+dilate = cv.dilate(img, kernel)
+  </pre>
+
+  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Umbralización (Binarización)</h3>
+
+  <p>Convierte la imagen a blanco y negro según un valor límite.</p>
+  <pre class="code">
+_, bin = cv.threshold(img, 128, 255, cv.THRESH_BINARY)
+  </pre>
+
+  <h4>⭐ Umbralización automática – Otsu</h4>
+  <pre class="code">
+_, bin = cv.threshold(img, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+  </pre>
+
+  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Extracción de Bordes</h3>
+  <pre class="code">
+edges = cv.Canny(img, 50, 150)
+  </pre>
+
+  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Adelgazamiento (Thinning)</h3>
+  <pre class="code">
+thin = cv.ximgproc.thinning(img)
+  </pre>
+
+  <h3 style="font-size: 1.7rem;"> Engrosamiento (Thickening)</h3>
+  <pre class="code">
+thick = cv.dilate(img, kernel)
+  </pre>
+
+  <h3 style="font-size: 1.7rem;">  Esqueletos</h3>
+  <pre class="code">
+skel = cv.ximgproc.thinning(img)
+  </pre>
+
+  <h3 style="font-size: 1.7rem; margin-top: 40px;"> Componentes Conectados</h3>
+  <p>Identifica regiones blancas separadas.</p>
+
+  <pre class="code">
+n, labels = cv.connectedComponents(bin)
+  </pre>
+
+  <h4> Componentes conectados con estadísticas</h4>
+  <pre class="code">
+n, lab, stats, cent = cv.connectedComponentsWithStats(bin)
+  </pre>
+
+  <p><strong>Ejemplo típico: filtrado por tamaño</strong></p>
+  <pre class="code">
+for x, y, w, h, area in stats:
+    if area > 500:
+        cv.rectangle(img, (x, y), (x+w, y+h), (0,255,0), 2)
+  </pre>
+
+  <h3 style="font-size: 1.7rem; margin-top: 50px;"> Resumen Final</h3>
+  <p>
+    <strong>1.</strong> Umbralizamos → imagen binaria  
+    <br><strong>2.</strong> Aplicamos morfología → limpieza  
+    <br><strong>3.</strong> Componentes conectados → detección de objetos  
+  </p>
+
+  <h2 style="font-size: 2rem; margin-top: 60px;">📹 Captura de Video con OpenCV</h2>
+  <p>
+    Se usa el módulo <code>cv2.VideoCapture()</code> para acceder a cámaras web o archivos de video.
+    Permite manipular cada frame en tiempo real, aplicando filtros o análisis morfológico.
+  </p>
+
+  <pre class="code">
+import cv2 as cv
+
+cap = cv.VideoCapture(0)
+if not cap.isOpened():
+    raise Exception("ERROR! No se pudo abrir la cámara")
+
+is_gray = False
+is_blurred = False
+
+while True:
+    _, frame = cap.read()
+
+    if is_gray:
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    if is_blurred:
+        frame = cv.blur(frame, (11, 11))
+
+    key = cv.waitKey(17)
+    if key == ord("q"):
+        exit()
+    elif key == ord("g"):
+        is_gray = not is_gray
+    elif key == ord("b"):
+        is_blurred = not is_blurred
+
+    cv.imshow("frame", frame)
+
+cap.release()
+cv.destroyAllWindows()
+  </pre>
+
 </section>
+
 
 
 <section id="abstract">
